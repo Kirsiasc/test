@@ -2,24 +2,24 @@ local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
 local Window = Rayfield:CreateWindow({
     Name = "STREE HUB",
-    Icon = 101447877507131,
+    Icon = 123032091977400,
     LoadingTitle = "STREE LOADING",
     LoadingSubtitle = "made by community: STREE HUB",
-    ShowText = "STREE HUB",
-    Theme = "Oc",
+    Theme = "DarkBlue",
+
     ToggleUIKeybind = "K",
     DisableRayfieldPrompts = false,
     DisableBuildWarnings = false,
 
     ConfigurationSaving = {
         Enabled = true,
-        FolderName = "STREE", -- Diberi tanda kutip agar valid
+        FolderName = "STREE",
         FileName = "STREE HUB"
     },
 
     Discord = {
         Enabled = true,
-        Invite = "MFzWcQNA", -- Hanya kode invite, tanpa link
+        Invite = "MFzWcQNA", -- hanya code
         RememberJoins = true
     },
 
@@ -27,7 +27,7 @@ local Window = Rayfield:CreateWindow({
     KeySettings = {
         Title = "STREE HUB",
         Subtitle = "STREE Key System",
-        Note = "https://discord.gg/tTqtKwnGZz",
+        Note = "Enter key to login",
         FileName = "Key",
         SaveKey = true,
         GrabKeyFromSite = false,
@@ -35,9 +35,16 @@ local Window = Rayfield:CreateWindow({
     }
 })
 
--- Universal Tab
+-- UNIVERSAL TAB
 local UniversalTab = Window:CreateTab("Universal script", "globe-lock")
 UniversalTab:CreateSection("cheating")
+
+UniversalTab:CreateButton({
+    Name = "FlyGuiV3",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
+    end,
+})
 
 UniversalTab:CreateButton({
     Name = "Farm Bond",
@@ -49,53 +56,42 @@ UniversalTab:CreateButton({
 UniversalTab:CreateButton({
     Name = "Auto Win",
     Callback = function()
-        loadstring(game:HttpGet("https://pastefy.app/sBQRgxba/raw"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/create-stree/STREE-HUB/main/autowin.lua"))()
     end,
 })
 
-UniversalTab:CreateButton({
-    Name = "WalkSpeed",
-    Callback = function()
-        loadstring(game:HttpGet("https://pastefy.app/QvT5KWcH/raw"))()
-    end,
-})
-
-UniversalTab:CreateButton({
-    Name = "Jump Power",
-    Callback = function()
-        loadstring(game:HttpGet("https://pastefy.app/mWz3tpuy/raw"))()
-    end,
-})
-
--- Tab contoh
-Window:CreateTab("Tab Example 1", 4483362458)
-Window:CreateTab("Tab Example 2", "rewind")
-
--- Game Tab
+-- GAME TAB
 local GameTab = Window:CreateTab("Game", "gamepad-2")
 GameTab:CreateSection("Beberapa script Terkenal")
 
 GameTab:CreateButton({
     Name = "Thand Hub",
     Callback = function()
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/thiennrb7/Script/main/autobond'))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/thiennrb7/Script/main/autobond"))()
     end,
 })
 
 GameTab:CreateButton({
     Name = "Null Fire",
     Callback = function()
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/JonasThePogi/DeadRails/main/newloadstring'))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/JonasThePogi/DeadRails/main/newloadstring"))()
     end,
 })
 
--- Notifikasi
+-- NOTIFIKASI
 Rayfield:Notify({
-    Title = "STREE LOADING",
-    Content = "Semua script Berhasil Dimuat",
-    Duration = 6,
-    Image = "Check",
+    Title = "Follow Akun TikTok",
+    Content = "Jangan Lupa Follow Akun TikTok @kirsia.sc",
+    Duration = 3,
+    Image = 0
 })
 
--- Load config
+Rayfield:Notify({
+    Title = "STREE LOADING",
+    Content = "Semua script berhasil dimuat dalam 3 detik",
+    Duration = 3,
+    Image = "Check"
+})
+
+-- LOAD KONFIGURASI
 Rayfield:LoadConfiguration()
