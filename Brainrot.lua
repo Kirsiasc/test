@@ -1,45 +1,54 @@
-local OrionLib = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Orion/main/source'))()
+local OrionLib
+local success, err = pcall(function()
+    OrionLib = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Orion/main/source'))()
+end)
 
--- Fungsi untuk menangani error loading Feather Icons
-local function SafeLoadIcons()
-    local success, err = pcall(function()
-        OrionLib:MakeNotification({
-            Name = "Loading Assets",
-            Content = "Memuat resources...",
-            Time = 2
-        })
-    end)
-    
-    if not success then
-        warn("Icon loading warning:", err)
-    end
+if not success or not OrionLib then
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+        Title = "STREE HUB Error",
+        Text = "Gagal memuat library. Coba lagi nanti.",
+        Duration = 5
+    })
+    return
 end
 
--- Fungsi input key alternatif jika MakePrompt tidak tersedia
+-- Fungsi input key alternatif yang lebih reliable
 local function GetKeyInput()
-    -- Coba metode MakePrompt terlebih dahulu
+    -- Coba buat prompt dengan Orion terlebih dahulu
     local success, result = pcall(function()
-        return OrionLib:MakePrompt({
-            Name = "Key Verification",
-            DefaultText = "Masukkan key akses",
-            OnClose = function()
-                OrionLib:MakeNotification({
-                    Name = "Info",
-                    Content = "Input key dibutuhkan",
-                    Time = 3
-                })
-            end
-        })
+        if OrionLib.MakePrompt then
+            return OrionLib:MakePrompt({
+                Name = "Verifikasi Key",
+                DefaultText = "Masukkan key akses STREE HUB",
+                OnClose = function()
+                    game:GetService("StarterGui"):SetCore("SendNotification", {
+                        Title = "Key Dibutuhkan",
+                        Text = "Anda harus memasukkan key untuk melanjutkan",
+                        Duration = 3
+                    })
+                end
+            })
+        end
     end)
     
-    -- Fallback ke input sederhana jika MakePrompt error
-    if not success then
-        warn("MakePrompt not available, using fallback:", result)
-        return game:GetService("StarterGui"):SetCore("SendNotification", {
-            Title = "Key Required",
-            Text = "Silakan hubungi developer untuk key akses",
-            Duration = 3
-        }) or ""
+    -- Fallback ke TextBox GUI sederhana
+    if not success or not result then
+        local textBox = Instance.new("TextBox")
+        textBox.PlaceholderText = "Masukkan key akses"
+        textBox.Size = UDim2.new(0, 200, 0, 50)
+        textBox.Position = UDim2.new(0.5, -100, 0.5, -25)
+        textBox.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+        
+        local enteredKey
+        textBox.FocusLost:Connect(function(enterPressed)
+            if enterPressed then
+                enteredKey = textBox.Text
+                textBox:Destroy()
+            end
+        end)
+        
+        repeat wait() until enteredKey ~= nil
+        return enteredKey
     end
     
     return result
@@ -51,25 +60,23 @@ local function ValidateKey()
     local maxAttempts = 3
     local attempts = 0
     
-    SafeLoadIcons() -- Memuat icons dengan penanganan error
-    
     while attempts < maxAttempts do
         attempts = attempts + 1
         
         local keyInput = GetKeyInput()
         
         if keyInput == ValidKey then
-            OrionLib:MakeNotification({
-                Name = "Success",
-                Content = "Key valid! Memuat STREE HUB...",
-                Time = 3
+            game:GetService("StarterGui"):SetCore("SendNotification", {
+                Title = "Key Valid",
+                Text = "Berhasil memverifikasi key!",
+                Duration = 3
             })
             return true
         else
-            OrionLib:MakeNotification({
-                Name = "Key Salah",
-                Content = string.format("Percobaan %d/%d", attempts, maxAttempts),
-                Time = 3
+            game:GetService("StarterGui"):SetCore("SendNotification", {
+                Title = "Key Salah",
+                Text = string.format("Percobaan %d/%d", attempts, maxAttempts),
+                Duration = 3
             })
         end
     end
@@ -77,51 +84,70 @@ local function ValidateKey()
     return false
 end
 
--- Main execution dengan error handling
-local success, err = pcall(function()
-    if ValidateKey() then
-        local Window = OrionLib:MakeWindow({
-            Name = "STREE HUB | Steal A Brainrot | 0.15.25",
-            HidePremium = true,
-            SaveConfig = true,
-            ConfigFolder = "STREE HUB",
-            Icon = "rbxassetid://123032091977400",
-            IntroEnabled = true,
-            IntroText = "Welcome To STREE HUB",
-            IntroIcon = "rbxassetid://123032091977400",
-            CloseCallback = function()
-                print("UI ditutup")
-            end
-        })
+-- Fungsi untuk membuat UI dengan error handling
+local function CreateMainUI()
+    local Window = OrionLib:MakeWindow({
+        Name = "STREE HUB | Steal A Brainrot | 0.15.25",
+        HidePremium = true,
+        SaveConfig = true,
+        ConfigFolder = "STREE HUB",
+        Icon = "rbxassetid://123032091977400",
+        IntroEnabled = true,
+        IntroText = "Welcome To STREE HUB",
+        CloseCallback = function()
+            print("UI ditutup")
+        end
+    })
 
-        -- Tab Home
-        local HomeTab = Window:MakeTab({
-            Name = "Home",
-            Icon = "rbxassetid://124242667284964",
-            PremiumOnly = false
-        })
+    -- Tab Home
+    local HomeTab = Window:MakeTab({
+        Name = "Home",
+        Icon = "rbxassetid://124242667284964",
+        PremiumOnly = false
+    })
 
-        -- Contoh button dengan error handling
-        HomeTab:AddButton({
-            Name = "Test Button",
-            Callback = function()
-                pcall(function()
-                    OrionLib:MakeNotification({
-                        Name = "Test",
-                        Content = "Button berfungsi!",
-                        Time = 3
-                    })
-                end)
-            end
-        })
-    end
-end)
+    -- Tab Game
+    local GameTab = Window:MakeTab({
+        Name = "Game",
+        Icon = "rbxassetid://453473360",
+        PremiumOnly = false
+    })
 
-if not success then
-    warn("Main execution error:", err)
-    game:GetService("StarterGui"):SetCore("SendNotification", {
-        Title = "STREE HUB Error",
-        Text = "Terjadi kesalahan saat memuat UI",
-        Duration = 3
+    -- Contoh button sederhana
+    HomeTab:AddButton({
+        Name = "Test Button",
+        Callback = function()
+            game:GetService("StarterGui"):SetCore("SendNotification", {
+                Title = "Test",
+                Text = "Button berfungsi!",
+                Duration = 3
+            })
+        end
     })
 end
+
+-- Eksekusi utama dengan semua error handling
+coroutine.wrap(function()
+    wait(2) -- Beri waktu untuk loading game
+    
+    -- Coba load Feather Icons
+    pcall(function()
+        OrionLib:MakeNotification({
+            Name = "Memuat",
+            Content = "Menyiapkan STREE HUB...",
+            Time = 2
+        })
+    end)
+    
+    if ValidateKey() then
+        local success, err = pcall(CreateMainUI)
+        if not success then
+            warn("Gagal membuat UI:", err)
+            game:GetService("StarterGui"):SetCore("SendNotification", {
+                Title = "Error",
+                Text = "Gagal memuat antarmuka. Coba reconnect.",
+                Duration = 5
+            })
+        end
+    end
+end)()
