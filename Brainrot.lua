@@ -1,43 +1,60 @@
 local OrionLib = loadstring(game:HttpGet('https://raw.githubusercontent.com/jensonhirst/Orion/main/source'))()
 
--- Fungsi untuk memvalidasi key dengan penanganan error yang lebih baik
+-- Fungsi untuk memvalidasi key tanpa kick
 local function ValidateKey()
     local ValidKey = "StreeHubEverbodyInIndonesia"
+    local maxAttempts = 3
+    local attempts = 0
     
-    -- Membuat prompt untuk input key dengan penanganan error
-    local keyInput
-    local promptSuccess, promptError = pcall(function()
-        keyInput = OrionLib:MakePrompt({
-            Name = "STREE HUB Key Verification",
-            DefaultText = "Enter your access key",
+    while attempts < maxAttempts do
+        attempts = attempts + 1
+        
+        -- Membuat prompt untuk input key
+        local keyInput = OrionLib:MakePrompt({
+            Name = "STREE HUB - Key System",
+            DefaultText = "Masukkan key Anda (Percobaan "..attempts.."/"..maxAttempts..")",
             OnClose = function()
-                game.Players.LocalPlayer:Kick("Key input was cancelled")
+                OrionLib:MakeNotification({
+                    Name = "Peringatan",
+                    Content = "Anda harus memasukkan key untuk melanjutkan",
+                    Time = 3
+                })
             end,
         })
-    end)
-    
-    if not promptSuccess then
-        warn("Prompt error:", promptError)
-        game.Players.LocalPlayer:Kick("Key verification system error. Please rejoin.")
-        return false
+        
+        -- Verifikasi key
+        if keyInput == ValidKey then
+            OrionLib:MakeNotification({
+                Name = "Sukses",
+                Content = "Key valid! Memuat STREE HUB...",
+                Time = 3,
+                Image = "rbxassetid://123032091977400"
+            })
+            return true
+        else
+            OrionLib:MakeNotification({
+                Name = "Key Salah",
+                Content = "Key tidak valid. Silakan coba lagi",
+                Time = 3
+            })
+        end
     end
     
-    -- Verifikasi key
-    if keyInput and keyInput == ValidKey then
-        return true
-    else
-        game.Players.LocalPlayer:Kick("Invalid access key. Please check your key and try again.")
-        return false
-    end
+    -- Jika sudah melebihi maxAttempts
+    OrionLib:MakeNotification({
+        Name = "Peringatan",
+        Content = "Anda telah melebihi batas percobaan",
+        Time = 5
+    })
+    return false
 end
 
 -- Main execution
 coroutine.wrap(function()
-    -- Tunggu sedikit untuk memastikan game sepenuhnya loaded
-    wait(1)
+    wait(1) -- Tunggu game loading
     
     if ValidateKey() then
-        -- Buat UI setelah key divalidasi
+        -- Buat UI utama
         local Window = OrionLib:MakeWindow({
             Name = "STREE HUB | Steal A Brainrot | 0.15.25",
             HidePremium = true,
@@ -45,10 +62,14 @@ coroutine.wrap(function()
             ConfigFolder = "STREE HUB",
             Icon = "rbxassetid://123032091977400",
             IntroEnabled = true,
-            IntroText = "Welcome To Script STREE HUB",
+            IntroText = "Welcome To STREE HUB",
             IntroIcon = "rbxassetid://123032091977400",
             CloseCallback = function()
-                print("UI Closed!")
+                OrionLib:MakeNotification({
+                    Name = "Info",
+                    Content = "Anda bisa membuka kembali UI dengan tombol yang ditentukan",
+                    Time = 5
+                })
             end
         })
 
@@ -66,24 +87,29 @@ coroutine.wrap(function()
             PremiumOnly = false
         })
 
-        -- Contoh elemen UI
+        -- Contoh button
         HomeTab:AddButton({
             Name = "Test Button",
             Callback = function()
                 OrionLib:MakeNotification({
                     Name = "Test",
-                    Content = "Button works!",
+                    Content = "Button berfungsi dengan baik!",
                     Time = 3
                 })
             end
         })
         
-        -- Tambahkan lebih banyak fitur di sini
-        
         -- Notifikasi sukses
         OrionLib:MakeNotification({
-            Name = "Success",
-            Content = "STREE HUB loaded successfully!",
+            Name = "STREE HUB",
+            Content = "Berhasil dimuat! Selamat menggunakan",
+            Time = 5
+        })
+    else
+        -- Jika key salah setelah beberapa percobaan
+        OrionLib:MakeNotification({
+            Name = "Akses Ditolak",
+            Content = "Anda tidak dapat mengakses STREE HUB",
             Time = 5
         })
     end
