@@ -1,102 +1,84 @@
--- == STEP 1: Load Rayfield (Key System) ==
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/jensonhirst/Orion/main/source')))()
 
--- Key yang valid
-local ValidKeys = {
-    ["STREE123"] = true,
-    ["KIRSIASC"] = true
-}
-
--- Buat window untuk Key System (Rayfield)
-local KeyWindow = Rayfield:CreateWindow({
-    Name = "🔐 STREE HUB | Key System",
-    LoadingTitle = "Memuat...",
-    LoadingSubtitle = "Verifikasi Key",
-    ConfigurationSaving = {
-        Enabled = false
-    },
-    Discord = {
-        Enabled = false
-    },
-    KeySystem = false
-})
-
--- Buat tab untuk input Key
-local KeyTab = KeyWindow:CreateTab("🔑 Masukkan Key", 4483362458)
-
-KeyTab:CreateInput({
-    Name = "Key STREE HUB",
-    PlaceholderText = "Contoh: STREE123",
-    RemoveTextAfterFocusLost = false,
-    Callback = function(input)
-        if ValidKeys[input] then
-            Rayfield:Notify({
-                Title = "Sukses!",
-                Content = "Key valid. Memuat STREE HUB...",
-                Duration = 3
-            })
-            wait(1)
-            KeyWindow:Destroy() -- Tutup jendela Rayfield
-            loadMainUI() -- Lanjut ke OrionLib UI
-        else
-            Rayfield:Notify({
-                Title = "Key Salah!",
-                Content = "Key tidak valid. Coba lagi.",
-                Duration = 4
-            })
-        end
+local Window = OrionLib:MakeWindow({
+    Name = "STREE HUB | Steal A Brainrot | v0.15.25",
+    HidePremium = true,
+    SaveConfig = true,
+    ConfigFolder = "STREE HUB",
+    Icon = "123032091977400",
+    IntroEnabled = true,
+    IntroText = "Welcome To Script STREE HUB",
+    Theme = Dark,
+    CloseCallback = function()
+        print("UI Closed!")
     end
+
+    ToggleUIKeybind = "K",
+    DisableRayfieldPrompts = false,
+    DisableBuildWarnings = false,
+
+    ConfigurationSaving = {
+        Enabled = true,
+        FolderName = "STREE",
+        FileName = "STREE HUB"
+    },
+
+    Discord = {
+        Enabled = true,
+        Invite = "MFzWcQNA", -- hanya code
+        RememberJoins = true
+    },
+
+    KeySystem = true,
+    KeySettings = {
+        Title = "STREE HUB",
+        Subtitle = "STREE Key System",
+        Note = "Enter key to akses",
+        FileName = "Key",
+        SaveKey = false,
+        GrabKeyFromSite = false,
+        Key = {"PASTE_KEY_HERE", "PASTEKEYHERE","StreeHubScriptInIndonesia"}
+    }
 })
 
--- == STEP 2: Fungsi Memuat UI Utama OrionLib ==
-function loadMainUI()
-    local OrionLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/jensonhirst/Orion/main/source"))()
+--[[
+Name = <string> - The name of the UI.
+HidePremium = <bool> - Whether or not the user details shows Premium status or not.
+SaveConfig = <bool> - Toggles the config saving in the UI.
+ConfigFolder = <string> - The name of the folder where the configs are saved.
+IntroEnabled = <bool> - Whether or not to show the intro animation.
+IntroText = <string> - Text to show in the intro animation.
+IntroIcon = <string> - URL to the image you want to use in the intro animation.
+Icon = <string> - URL to the image you want displayed on the window.
+CloseCallback = <function> - Function to execute when the window is closed.
+]]
 
-    local MainWindow = OrionLib:MakeWindow({
-        Name = "STREE HUB | Versi OrionLib",
-        HidePremium = false,
-        SaveConfig = true,
-        ConfigFolder = "STREE_HUB",
-        IntroText = "Selamat datang di STREE HUB 🎉",
-        Theme = {
-            Image = "rbxassetid://5553946656", -- Ganti sesuai tema kamu
-            Info = "STREE Style",
-            Credit = "kirsiasc"
-        }
-    })
+local HomeTab = Window:MakeTab({
+    Name = "Home",
+    Icon = "rbxassetid://124242667284964",
+    PremiumOnly = false
+})
 
-    -- Tab utama
-    local MainTab = MainWindow:MakeTab({
-        Name = "Main",
-        Icon = "rbxassetid://4483345998",
-        PremiumOnly = false
-    })
 
-    MainTab:AddButton({
-        Name = "Fling Player",
-        Callback = function()
-            local lp = game.Players.LocalPlayer
-            local char = lp.Character
-            if char and char:FindFirstChild("HumanoidRootPart") then
-                char.HumanoidRootPart.Velocity = Vector3.new(9999, 9999, 9999)
-            end
-        end
-    })
 
-    MainTab:AddSlider({
-        Name = "WalkSpeed",
-        Min = 16,
-        Max = 150,
-        Default = 16,
-        Increment = 1,
-        ValueName = "Speed",
-        Callback = function(value)
-            local char = game.Players.LocalPlayer.Character
-            if char and char:FindFirstChildOfClass("Humanoid") then
-                char:FindFirstChildOfClass("Humanoid").WalkSpeed = value
-            end
-        end
-    })
+--[[
+Name = <string> - The name of the tab.
+Icon = <string> - The icon of the tab.
+PremiumOnly = <bool> - Makes the tab accessible to Sirus Premium users only.
+]]
 
-    OrionLib:Init()
-end
+local UniversalTab = Window:MakeTab({
+    Name = "game",
+    Icon = "rbxassetid://453473360",
+    PremiumOnly = false
+})
+
+--[[
+Name = <string> - The name of the tab.
+Icon = <string> - The icon of the tab.
+PremiumOnly = <bool> - Makes the tab accessible to Sirus Premium users only.
+]]
+
+OrionLib:Destroy()
+
+OrionLib:Init()
