@@ -5,13 +5,13 @@ local Window = OrionLib:MakeWindow({
     HidePremium = true,
     SaveConfig = true,
     ConfigFolder = "STREE HUB",
-    Icon = "rbxassetid://123032091977400",
+    Icon = "123032091977400",
     IntroEnabled = true,
     IntroText = "Welcome To Script STREE HUB",
-    Theme = "Dark", -- Perlu tanda kutip
+    Theme = "Dark",
     CloseCallback = function()
         print("UI Closed!")
-    end, -- Tambahkan koma di sini
+    end,
     ToggleUIKeybind = "K",
     DisableRayfieldPrompts = false,
     DisableBuildWarnings = false,
@@ -24,7 +24,7 @@ local Window = OrionLib:MakeWindow({
 
     Discord = {
         Enabled = true,
-        Invite = "MFzWcQNA", -- hanya kode invite
+        Invite = "MFzWcQNA", -- hanya code
         RememberJoins = true
     },
 
@@ -40,16 +40,16 @@ local Window = OrionLib:MakeWindow({
     }
 })
 
--- Tab Home
 local HomeTab = Window:MakeTab({
     Name = "Home",
     Icon = "rbxassetid://124242667284964",
     PremiumOnly = false
 })
 
--- Tab Game
 local UniversalTab = Window:MakeTab({
     Name = "game",
     Icon = "rbxassetid://453473360",
     PremiumOnly = false
 })
+
+OrionLib:Init()
