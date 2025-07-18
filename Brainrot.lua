@@ -8,36 +8,10 @@ local Window = OrionLib:MakeWindow({
     Icon = "123032091977400",
     IntroEnabled = true,
     IntroText = "Welcome To Script STREE HUB",
-    Theme = "Dark",
+    Theme = "Dark", -- harus string
     CloseCallback = function()
         print("UI Closed!")
-    end,
-    ToggleUIKeybind = "K",
-    DisableRayfieldPrompts = false,
-    DisableBuildWarnings = false,
-
-    ConfigurationSaving = {
-        Enabled = true,
-        FolderName = "STREE",
-        FileName = "STREE HUB"
-    },
-
-    Discord = {
-        Enabled = true,
-        Invite = "MFzWcQNA", -- hanya code
-        RememberJoins = true
-    },
-
-    KeySystem = true,
-    KeySettings = {
-        Title = "STREE HUB",
-        Subtitle = "STREE Key System",
-        Note = "Enter key to akses",
-        FileName = "Key",
-        SaveKey = false,
-        GrabKeyFromSite = false,
-        Key = {"PASTE_KEY_HERE", "PASTEKEYHERE", "StreeHubScriptInIndonesia"}
-    }
+    end
 })
 
 local HomeTab = Window:MakeTab({
@@ -46,10 +20,51 @@ local HomeTab = Window:MakeTab({
     PremiumOnly = false
 })
 
+local Section = HomeTab:AddSection({
+    Name = "LINK STREE HUB"
+})
+
+HomeTab:AddButton({
+    Name = "Discord",
+    Callback = function()
+        setclipboard("https://discord.gg/jdmX43t5mY")
+        OrionLib:MakeNotification({
+            Name = "Discord",
+            Content = "Link Discord berhasil disalin!",
+            Image = "rbxassetid://123032091977400",
+            Time = 4
+        })
+    end
+})
+
+HomeTab:AddButton({
+    Name = "WhatsApp",
+    Callback = function()
+        setclipboard("https://whatsapp.com/channel/0029VbAwRihKAwEtwyowt62N")
+        OrionLib:MakeNotification({
+            Name = "WhatsApp",
+            Content = "Link WhatsApp berhasil disalin!",
+            Image = "rbxassetid://123032091977400",
+            Time = 4
+        })
+    end
+})
+
 local UniversalTab = Window:MakeTab({
-    Name = "game",
+    Name = "Game",
     Icon = "rbxassetid://453473360",
     PremiumOnly = false
 })
 
+UniversalTab:AddToggle({
+    Name = "Noclip",
+    Default = false,
+    Callback = function(Value)
+        -- Pastikan file Noclip.lua kamu sudah benar dan punya toggle support
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Kirsiasc/STREE-HUB/refs/heads/main/Noclip.lua"))()(Value)
+    end
+})
+
+-- Jangan destroy dulu! Biarkan GUI tampil
+-- OrionLib:Destroy()
 OrionLib:Init()
