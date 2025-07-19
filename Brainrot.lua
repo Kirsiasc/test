@@ -82,7 +82,7 @@ GameTab:AddToggle({
     Name = "ESP Highlight",
     Default = false,
     Callback = function(Value)
-        SETTINGS.ESP_HIGHLIGHT = Value
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Kirsiasc/STREE-HUB/refs/heads/main/ESPhighlight.lua"))()(Value)
     end
 })
 
@@ -90,52 +90,9 @@ GameTab:AddToggle({
     Name = "ESP NameTag",
     Default = false,
     Callback = function(Value)
-        SETTINGS.ESP_NAME = Value
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Kirsiasc/STREE-HUB/refs/heads/main/ESPnametag.lua"))()(Value)
     end
 })
-
--- OPTIONAL: ESP LOOP (Contoh visual ESP loop sederhana)
-local RunService = game:GetService("RunService")
-
-RunService.RenderStepped:Connect(function()
-    for _, player in pairs(game.Players:GetPlayers()) do
-        if player ~= game.Players.LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-            if SETTINGS.ESP_NAME then
-                if not player.Character:FindFirstChild("NameBillboard") then
-                    local bb = Instance.new("BillboardGui", player.Character)
-                    bb.Name = "NameBillboard"
-                    bb.Size = UDim2.new(0, 200, 0, 50)
-                    bb.StudsOffset = Vector3.new(0, 3, 0)
-                    bb.Adornee = player.Character:FindFirstChild("Head")
-                    bb.AlwaysOnTop = true
-
-                    local label = Instance.new("TextLabel", bb)
-                    label.Size = UDim2.new(1, 0, 1, 0)
-                    label.BackgroundTransparency = 1
-                    label.Text = player.Name
-                    label.TextColor3 = Color3.new(1, 1, 1)
-                    label.TextScaled = true
-                end
-            else
-                local bb = player.Character:FindFirstChild("NameBillboard")
-                if bb then bb:Destroy() end
-            end
-
-            if SETTINGS.ESP_HIGHLIGHT then
-                if not player.Character:FindFirstChildOfClass("Highlight") then
-                    local hl = Instance.new("Highlight", player.Character)
-                    hl.FillColor = Color3.new(1, 0, 0)
-                    hl.OutlineColor = Color3.new(1, 1, 1)
-                    hl.FillTransparency = 0.5
-                    hl.OutlineTransparency = 0
-                end
-            else
-                local hl = player.Character:FindFirstChildOfClass("Highlight")
-                if hl then hl:Destroy() end
-            end
-        end
-    end
-end)
 
 -- JANGAN HAPUS INIT
 OrionLib:Init()
