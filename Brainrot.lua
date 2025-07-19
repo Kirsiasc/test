@@ -15,8 +15,8 @@ local Window = OrionLib:MakeWindow({
 })
 
 local SETTINGS = {
-    ESP_HIGHLIGHT = false,
-    ESP_NAME = false
+    ESP_HIGHLIGHT = Value,
+    ESP_NAME = Value
 }
 
 -- HOME TAB
