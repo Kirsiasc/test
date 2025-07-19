@@ -14,11 +14,6 @@ local Window = OrionLib:MakeWindow({
     end
 })
 
-local SETTINGS = {
-    ESP_HIGHLIGHT = false,
-    ESP_NAME = false
-}
-
 -- HOME TAB
 local HomeTab = Window:MakeTab({
     Name = "Home",
@@ -82,7 +77,7 @@ GameTab:AddToggle({
     Name = "ESP Highlight",
     Default = false,
     Callback = function(Value)
-        SETTINGS.ESP_HIGHLIGHT = Value
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Kirsiasc/STREE-HUB/refs/heads/main/ESPnametag.lua"))()(Value)
     end
 })
 
@@ -90,7 +85,7 @@ GameTab:AddToggle({
     Name = "ESP NameTag",
     Default = false,
     Callback = function(Value)
-        SETTINGS.ESP_NAME = Value
+        Loadstring(game:HttpGet("https://raw.githubusercontent.com/Kirsiasc/STREE-HUB/refs/heads/main/ESPnametag.lua")()(Value)
     end
 })
 
