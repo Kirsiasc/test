@@ -73,7 +73,7 @@ local VisualTab = Window:MakeTab({
     PremiumOnly = false
 })
 
-GameTab:AddToggle({
+VisualTab:AddToggle({
     Name = "ESP Highlight",
     Default = false,
     Callback = function(Value)
@@ -81,7 +81,7 @@ GameTab:AddToggle({
     end
 })
 
-GameTab:AddToggle({
+VisualTab:AddToggle({
     Name = "ESP NameTag",
     Default = false,
     Callback = function(Value)
