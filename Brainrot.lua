@@ -72,7 +72,7 @@ UniversalTab:AddToggle({
 })
 
 -- VISUAL TAB
-local GameTab = Window:MakeTab({
+local VisualTab = Window:MakeTab({
     Name = "Visual",
     Icon = "rbxassetid://139410041229101",
     PremiumOnly = false
