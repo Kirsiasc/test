@@ -1,10 +1,5 @@
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/jensonhirst/Orion/main/source')))()
 
-local SETTINGS = {
-    ESP_HIGHLIGHT = false,
-    ESP_NAME = false,
-}
-
 local Window = OrionLib:MakeWindow({
     Name = "STREE HUB | Steal A Brainrot | v0.15.25",
     HidePremium = true,
@@ -18,6 +13,11 @@ local Window = OrionLib:MakeWindow({
         print("UI Closed!")
     end
 })
+
+local SETTINGS = {
+    ESP_HIGHLIGHT = false,
+    ESP_NAME = false
+}
 
 -- HOME TAB
 local HomeTab = Window:MakeTab({
@@ -56,7 +56,7 @@ HomeTab:AddButton({
     end
 })
 
--- UNIVERSAL TAB
+-- GAME TAB
 local UniversalTab = Window:MakeTab({
     Name = "Game",
     Icon = "rbxassetid://453473360",
@@ -71,7 +71,7 @@ UniversalTab:AddToggle({
     end
 })
 
--- VISUAL TAB + ESP TOGGLE
+-- VISUAL TAB
 local GameTab = Window:MakeTab({
     Name = "Visual",
     Icon = "rbxassetid://139410041229101",
@@ -94,69 +94,48 @@ GameTab:AddToggle({
     end
 })
 
--- === ESP SYSTEM ===
-local Players = game:GetService("Players")
+-- OPTIONAL: ESP LOOP (Contoh visual ESP loop sederhana)
 local RunService = game:GetService("RunService")
-local LocalPlayer = Players.LocalPlayer
 
 RunService.RenderStepped:Connect(function()
-    for _, player in pairs(Players:GetPlayers()) do
-        if player ~= LocalPlayer then
-            local character = player.Character
-            if character and character:FindFirstChild("HumanoidRootPart") and character:FindFirstChild("Head") then
-                -- ESP Highlight
-                local highlight = character:FindFirstChild("STREE_HUB_HIGHLIGHT")
-                if SETTINGS.ESP_HIGHLIGHT then
-                    if not highlight then
-                        local newHighlight = Instance.new("Highlight")
-                        newHighlight.Name = "STREE_HUB_HIGHLIGHT"
-                        newHighlight.FillColor = Color3.fromRGB(255, 0, 0)
-                        newHighlight.OutlineColor = Color3.fromRGB(255, 255, 255)
-                        newHighlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                        newHighlight.Parent = character
-                    end
-                elseif highlight then
-                    highlight:Destroy()
-                end
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player ~= game.Players.LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            if SETTINGS.ESP_NAME then
+                if not player.Character:FindFirstChild("NameBillboard") then
+                    local bb = Instance.new("BillboardGui", player.Character)
+                    bb.Name = "NameBillboard"
+                    bb.Size = UDim2.new(0, 200, 0, 50)
+                    bb.StudsOffset = Vector3.new(0, 3, 0)
+                    bb.Adornee = player.Character:FindFirstChild("Head")
+                    bb.AlwaysOnTop = true
 
-                -- ESP NameTag
-                local nameTag = character:FindFirstChild("STREE_HUB_NAME")
-                if SETTINGS.ESP_NAME then
-                    if not nameTag then
-                        local billboard = Instance.new("BillboardGui")
-                        billboard.Name = "STREE_HUB_NAME"
-                        billboard.Size = UDim2.new(0, 200, 0, 50)
-                        billboard.Adornee = character.Head
-                        billboard.StudsOffset = Vector3.new(0, 2.5, 0)
-                        billboard.AlwaysOnTop = true
-                        billboard.Parent = character
-
-                        local label = Instance.new("TextLabel")
-                        label.Size = UDim2.new(1, 0, 1, 0)
-                        label.BackgroundTransparency = 1
-                        label.Text = player.DisplayName or player.Name
-                        label.TextColor3 = Color3.fromRGB(255, 255, 255)
-                        label.TextStrokeTransparency = 0
-                        label.TextScaled = true
-                        label.Font = Enum.Font.GothamBold
-                        label.Parent = billboard
-                    end
-                elseif nameTag then
-                    nameTag:Destroy()
+                    local label = Instance.new("TextLabel", bb)
+                    label.Size = UDim2.new(1, 0, 1, 0)
+                    label.BackgroundTransparency = 1
+                    label.Text = player.Name
+                    label.TextColor3 = Color3.new(1, 1, 1)
+                    label.TextScaled = true
                 end
             else
-                -- Cleanup jika karakter belum lengkap
-                if character then
-                    local cleanupHighlight = character:FindFirstChild("STREE_HUB_HIGHLIGHT")
-                    if cleanupHighlight then cleanupHighlight:Destroy() end
+                local bb = player.Character:FindFirstChild("NameBillboard")
+                if bb then bb:Destroy() end
+            end
 
-                    local cleanupName = character:FindFirstChild("STREE_HUB_NAME")
-                    if cleanupName then cleanupName:Destroy() end
+            if SETTINGS.ESP_HIGHLIGHT then
+                if not player.Character:FindFirstChildOfClass("Highlight") then
+                    local hl = Instance.new("Highlight", player.Character)
+                    hl.FillColor = Color3.new(1, 0, 0)
+                    hl.OutlineColor = Color3.new(1, 1, 1)
+                    hl.FillTransparency = 0.5
+                    hl.OutlineTransparency = 0
                 end
+            else
+                local hl = player.Character:FindFirstChildOfClass("Highlight")
+                if hl then hl:Destroy() end
             end
         end
     end
 end)
 
--- === INIT UI ===
+-- JANGAN HAPUS INIT
 OrionLib:Init()
