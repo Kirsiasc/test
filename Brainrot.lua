@@ -65,6 +65,27 @@ UniversalTab:AddToggle({
     end
 })
 
+local GameTab = Window:MakeTab({
+    Name = "Visual",
+    Icon = "rbxassetid://139410041229101",
+    PremiumOnly = false
+
+Tab:AddToggle({
+    Name = "ESP Highlight",
+    Default = false,
+    Callback = function(Value)
+        SETTINGS.ESP_HIGHLIGHT = Value
+    end
+})
+
+Tab:AddToggle({
+    Name = "ESP NameTag",
+    Default = false,
+    Callback = function(Value)
+        SETTINGS.ESP_NAME = Value
+    end
+})
+
 -- Jangan destroy dulu! Biarkan GUI tampil
 -- OrionLib:Destroy()
 OrionLib:Init()
