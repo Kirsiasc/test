@@ -62,7 +62,7 @@ UniversalTab:AddToggle({
     Name = "Noclip",
     Default = false,
     Callback = function(Value)
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Kirsiasc/STREE-HUB/refs/heads/main/Noclip.lua"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Kirsiasc/STREE-HUB/refs/heads/main/Noclip.lua"))()(Value)
     end
 })
 
@@ -77,7 +77,7 @@ VisualTab:AddToggle({
     Name = "ESP Highlight",
     Default = false,
     Callback = function(Value)
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Kirsiasc/STREE-HUB/refs/heads/main/ESPhighlight.lua"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Kirsiasc/STREE-HUB/refs/heads/main/ESPhighlight.lua"))()(Value)
     end
 })
 
@@ -85,8 +85,14 @@ VisualTab:AddToggle({
     Name = "ESP NameTag",
     Default = false,
     Callback = function(Value)
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Kirsiasc/STREE-HUB/refs/heads/main/ESPnametag.lua"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Kirsiasc/STREE-HUB/refs/heads/main/ESPnametag.lua"))()(Value)
     end
+})
+
+local SettingsTab = Window:MakeTab({
+    Name = "Settings",
+    Icon = "rbxassetid://139410041229101",
+    PremiumOnly = false
 })
 
 -- JANGAN HAPUS INIT
