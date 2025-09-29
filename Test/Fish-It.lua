@@ -12,7 +12,7 @@ end
 local Window = WindUI:CreateWindow({
     Title = "AzarineHub",
     Icon = "rbxassetid://125586515064911",
-    Author = " Fish It | Version ",
+    Author = " Fish It | V1.0.1 ",
     Folder = "AzarineHub",
     Size = default,
     LiveSearchDropdown = true,
@@ -20,11 +20,6 @@ local Window = WindUI:CreateWindow({
 
 Window:Tag({
     Title = "Free",
-    Color = Color3.fromRGB(0, 255, 0),
-})
-
-Window:Tag({
-    Title = "Developer",
     Color = Color3.fromRGB(0, 255, 0),
 })
 
@@ -263,6 +258,11 @@ local function NotifyError(title, content)
         Duration = 3
     })
 end
+
+Tab3:Paragraph({
+    Title = "Test Teature",
+    Desc = "This is still in testing, maybe the next update can be used.",
+})
 
 Tab3:Section({
     Title = "Fishing Rods",
