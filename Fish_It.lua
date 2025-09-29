@@ -151,8 +151,8 @@ Tab2:Button({
 Tab2:Toggle({
     Title = "Infinite Jump",
     Desc = "activate to use infinite jump",
-    Icon = "bird",
-    Type = "Checkbox",
+    Icon = false,
+    Type = false,
     Default = false,
     Callback = function(state) 
         _G.InfiniteJump = state
