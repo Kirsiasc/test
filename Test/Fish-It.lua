@@ -304,7 +304,7 @@ Tab3:Section({
     Icon = "bug"
 })
 
-Tab4:Dropdown({
+Tab3:Dropdown({
     Title = "Select Bait",
     Values = baitNames,
     Value = selectedBait,
