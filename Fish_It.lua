@@ -14,7 +14,6 @@ local Window = WindUI:CreateWindow({
     Icon = "rbxassetid://125586515064911",
     Author = " Fish It | V1.0.1 ",
     Folder = "AzarineHub",
-    Size = default,
     LiveSearchDropdown = true,
 })
 
@@ -23,7 +22,7 @@ Window:Tag({
     Color = Color3.fromRGB(0, 255, 0),
 })
 
-AzarineUI:Notify({
+WindUI:Notify({
     Title = "Notification",
     Content = "Started AutoFish Thread",
     Icon = "fish",
@@ -35,7 +34,7 @@ local Tab1 = Window:Tab({
     Icon = "info",
 })
 
-local Section = Tab1:Section({ 
+Tab1:Section({ 
     Title = "Community Discord",
     TextXAlignment = "Left",
     TextSize = 17,
@@ -58,12 +57,20 @@ local Tab2 = Window:Tab({
 
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
-local Character = Player.Character or Player.CharacterAdded:Wait()
-local Humanoid = Character:WaitForChild("Humanoid")
+local UserInputService = game:GetService("UserInputService")
 
 _G.CustomJumpPower = 50
+_G.InfiniteJump = false
 
-local Input = Tab2:Input({
+local function getHumanoid()
+    local character = Player.Character
+    if character then
+        return character:FindFirstChildOfClass("Humanoid")
+    end
+    return nil
+end
+
+Tab2:Input({
     Title = "WalkSpeed",
     Desc = "Minimum 16 speed",
     Value = "16",
@@ -72,17 +79,20 @@ local Input = Tab2:Input({
     Placeholder = "Enter number...",
     Callback = function(input) 
         local speed = tonumber(input)
-        if speed and speed >= 16 then
-            Humanoid.WalkSpeed = speed
-            print("WalkSpeed set to: " .. speed)
-        else
-            Humanoid.WalkSpeed = 16
-            print("⚠️ Invalid input, set to default (16)")
+        local humanoid = getHumanoid()
+        if humanoid then
+            if speed and speed >= 16 then
+                humanoid.WalkSpeed = speed
+                print("WalkSpeed set to: " .. speed)
+            else
+                humanoid.WalkSpeed = 16
+                print("⚠️ Invalid input, set to default (16)")
+            end
         end
     end
 })
 
-local Input = Tab2:Input({
+Tab2:Input({
     Title = "Jump Power",
     Desc = "Minimum 50 jump",
     Value = "50",
@@ -93,7 +103,7 @@ local Input = Tab2:Input({
         local value = tonumber(input)
         if value and value >= 50 then
             _G.CustomJumpPower = value
-            local humanoid = game:GetService("Players").LocalPlayer.Character and game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+            local humanoid = getHumanoid()
             if humanoid then
                 humanoid.UseJumpPower = true
                 humanoid.JumpPower = value
@@ -105,12 +115,12 @@ local Input = Tab2:Input({
     end
 })
 
-local Button = Tab2:Button({
+Tab2:Button({
     Title = "Reset Jump Power",
     Desc = "Return Jump Power to normal (50)",
     Callback = function()
         _G.CustomJumpPower = 50
-        local humanoid = game:GetService("Players").LocalPlayer.Character and game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+        local humanoid = getHumanoid()
         if humanoid then
             humanoid.UseJumpPower = true
             humanoid.JumpPower = 50
@@ -129,14 +139,15 @@ Tab2:Button({
     Title = "Reset Speed",
     Desc = "Return speed to normal (16)",
     Callback = function()
-        Humanoid.WalkSpeed = 16
-        print("WalkSpeed reset to default (16)")
+        local humanoid = getHumanoid()
+        if humanoid then
+            humanoid.WalkSpeed = 16
+            print("WalkSpeed reset to default (16)")
+        end
     end
 })
 
-local UserInputService = game:GetService("UserInputService")
-
-local Toggle = Tab2:Toggle({
+Tab2:Toggle({
     Title = "Infinite Jump",
     Desc = "activate to use infinite jump",
     Icon = "bird",
@@ -154,8 +165,7 @@ local Toggle = Tab2:Toggle({
 
 UserInputService.JumpRequest:Connect(function()
     if _G.InfiniteJump then
-        local character = Player.Character or Player.CharacterAdded:Wait()
-        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        local humanoid = getHumanoid()
         if humanoid then
             humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
         end
@@ -167,37 +177,37 @@ local Tab3 = Window:Tab({
     Icon = "landmark",
 })
 
-local Section = Tab3:Section({ 
+Tab3:Section({ 
     Title = "Main",
     TextXAlignment = "Left",
     TextSize = 17,
 })
 
+_G.AutoEquipRod = false
+_G.AutoFishing = false
+_G.AutoSell = false
+
 Tab3:Toggle({
     Title = "Auto Equip Rod",
     Desc = "Selalu equip pancing otomatis",
-    Icon = false,
-    Type = false,
     Default = false,
     Callback = function(value)
         _G.AutoEquipRod = value
     end
 })
 
-local player = game.Players.LocalPlayer
-
 spawn(function()
     while task.wait(1) do
         if _G.AutoEquipRod then
             pcall(function()
-                local backpack = player:FindFirstChild("Backpack")
+                local backpack = Player:FindFirstChild("Backpack")
                 if backpack then
                     local rod = backpack:FindFirstChild("Rod") 
                         or backpack:FindFirstChild("FishingRod") 
                         or backpack:FindFirstChild("OldRod") 
                         or backpack:FindFirstChild("BasicRod")
-                    if rod and not player.Character:FindFirstChild(rod.Name) then
-                        player.Character.Humanoid:EquipTool(rod)
+                    if rod and Player.Character and not Player.Character:FindFirstChild(rod.Name) then
+                        Player.Character.Humanoid:EquipTool(rod)
                     end
                 end
             end)
@@ -208,36 +218,29 @@ end)
 Tab3:Toggle({
     Title = "Auto Fishing",
     Desc = "Automatic Auto Fishing",
-    Icon = false,
-    Type = false,
     Default = false,
     Callback = function(value) 
         _G.AutoFishing = value
     end
 })
 
-local Players = game:GetService("Players")
 local RepStorage = game:GetService("ReplicatedStorage")
-local player = game.Players.LocalPlayer
 
 spawn(function()
     while wait() do
         if _G.AutoFishing then
-            repeat
-                  pcall(function()
-                       local char = player.Character or player.CharacterAdded:Wait()
-                       if char:FindFirstChild("!!!FISHING_VIEW_MODEL!!!") then
-                          RepStorage.Packages._Index["sleitnick_net@0.2.0"].net["RE/EquipToolFromHotbar"]:FireServer(1)
-                       end                    
-                       local cosmeticFolder = workspace:FindFirstChild("CosmeticFolder")
-                       if cosmeticFolder and not cosmeticFolder:FindFirstChild(tostring(player.UserId)) then
-                          RepStorage.Packages._Index["sleitnick_net@0.2.0"].net["RF/ChargeFishingRod"]:InvokeServer(2)
-                          wait(0.5)
-                          RepStorage.Packages._Index["sleitnick_net@0.2.0"].net["RF/RequestFishingMinigameStarted"]:InvokeServer(1, 1)
-                       end
-                  end)
-            wait(0.2)
-            until not _G.AutoFishing
+            pcall(function()
+                local char = Player.Character or Player.CharacterAdded:Wait()
+                if char:FindFirstChild("!!!FISHING_VIEW_MODEL!!!") then
+                    RepStorage.Packages._Index["sleitnick_net@0.2.0"].net["RE/EquipToolFromHotbar"]:FireServer(1)
+                end                    
+                local cosmeticFolder = workspace:FindFirstChild("CosmeticFolder")
+                if cosmeticFolder and not cosmeticFolder:FindFirstChild(tostring(Player.UserId)) then
+                    RepStorage.Packages._Index["sleitnick_net@0.2.0"].net["RF/ChargeFishingRod"]:InvokeServer(2)
+                    wait(0.5)
+                    RepStorage.Packages._Index["sleitnick_net@0.2.0"].net["RF/RequestFishingMinigameStarted"]:InvokeServer(1, 1)
+                end
+            end)
         end
     end
 end)
@@ -245,21 +248,16 @@ end)
 spawn(function()
     while wait() do
         if _G.AutoFishing then
-            repeat
-                  pcall(function()
-                       RepStorage.Packages._Index["sleitnick_net@0.2.0"].net["RE/FishingCompleted"]:FireServer()
-                  end)
-            wait(0.2)
-            until not _G.AutoFishing
+            pcall(function()
+                RepStorage.Packages._Index["sleitnick_net@0.2.0"].net["RE/FishingCompleted"]:FireServer()
+            end)
         end
     end
 end)
 
-local Toggle = Tab3:Toggle({
+Tab3:Toggle({
     Title = "Auto Sell",
     Desc = "Automatic fish sales",
-    Icon = false,
-    Type = false,
     Default = false,
     Callback = function(state)
         _G.AutoSell = state
@@ -281,7 +279,7 @@ local Toggle = Tab3:Toggle({
     end
 })
 
-local Section = Tab3:Section({ 
+Tab3:Section({ 
     Title = "Opsional",
     TextXAlignment = "Left",
     TextSize = 17,
@@ -291,6 +289,71 @@ local Tab4 = Window:Tab({
     Title = "Shop",
     Icon = "badge-dollar-sign",
 })
+
+local rodNames = {"Basic Rod", "Old Rod", "Fishing Rod"}
+local selectedRod = "Basic Rod"
+local rodKeyMap = {
+    ["Basic Rod"] = "basic",
+    ["Old Rod"] = "old", 
+    ["Fishing Rod"] = "fishing"
+}
+local rods = {
+    basic = 1,
+    old = 2,
+    fishing = 3
+}
+
+local baitNames = {"Basic Bait", "Advanced Bait", "Pro Bait"}
+local selectedBait = "Basic Bait"
+local baitKeyMap = {
+    ["Basic Bait"] = "basic",
+    ["Advanced Bait"] = "advanced",
+    ["Pro Bait"] = "pro"
+}
+local baits = {
+    basic = 10,
+    advanced = 20,
+    pro = 30
+}
+
+local weatherNames = {"Rain", "Storm", "Sunny"}
+local selectedWeathers = {}
+local weatherKeyMap = {
+    ["Rain"] = "rain",
+    ["Storm"] = "storm", 
+    ["Sunny"] = "sunny"
+}
+local weathers = {
+    rain = 1,
+    storm = 2,
+    sunny = 3
+}
+
+local function NotifyInfo(title, content)
+    WindUI:Notify({
+        Title = title,
+        Content = content,
+        Duration = 3
+    })
+end
+
+local function NotifySuccess(title, content)
+    WindUI:Notify({
+        Title = title,
+        Content = content,
+        Icon = "check",
+        Duration = 3
+    })
+end
+
+local function NotifyError(title, content)
+    WindUI:Notify({
+        Title = title,
+        Content = content,
+        Icon = "x",
+        Duration = 3
+    })
+end
 
 Tab4:Section({
     Title = "Fishing Rods",
@@ -312,21 +375,22 @@ Tab4:Button({
     Callback = function()
         local key = rodKeyMap[selectedRod]
         if key and rods[key] then
-            local success, err = pcall(function()
-                if RFPurchaseFishingRod then
+            local RFPurchaseFishingRod = RepStorage:FindFirstChild("RFPurchaseFishingRod")
+            if RFPurchaseFishingRod then
+                local success, err = pcall(function()
                     RFPurchaseFishingRod:InvokeServer(rods[key])
+                end)
+                if success then
+                    NotifySuccess("Rod Purchase", "Purchased " .. selectedRod)
+                else
+                    NotifyError("Rod Purchase Error", tostring(err))
                 end
-            end)
-            if success then
-                NotifySuccess("Rod Purchase", "Purchased " .. selectedRod)
-            else
-                NotifyError("Rod Purchase Error", tostring(err))
             end
         end
     end
 })
 
-local Tab4:Section({
+Tab4:Section({
     Title = "Baits",
     Icon = "bug"
 })
@@ -347,21 +411,22 @@ Tab4:Button({
         local key = baitKeyMap[selectedBait]
         if key and baits[key] then
             local amount = baits[key]
-            local success, err = pcall(function()
-                if RFPurchaseBait then
+            local RFPurchaseBait = RepStorage:FindFirstChild("RFPurchaseBait")
+            if RFPurchaseBait then
+                local success, err = pcall(function()
                     RFPurchaseBait:InvokeServer(amount)
+                end)
+                if success then
+                    NotifySuccess("Bait Purchase", "Purchased " .. selectedBait .. " x" .. amount)
+                else
+                    NotifyError("Bait Purchase Error", tostring(err))
                 end
-            end)
-            if success then
-                NotifySuccess("Bait Purchase", "Purchased " .. selectedBait .. " x" .. amount)
-            else
-                NotifyError("Bait Purchase Error", tostring(err))
             end
         end
     end
 })
 
-local Tab4:Section({
+Tab4:Section({
     Title = "Weather Events",
     Icon = "cloud"
 })
@@ -383,29 +448,19 @@ Tab4:Button({
         for _, weatherName in ipairs(selectedWeathers) do
             local key = weatherKeyMap[weatherName]
             if key and weathers[key] then
-                local success, err = pcall(function()
-                    if RFPurchaseWeatherEvent then
+                local RFPurchaseWeatherEvent = RepStorage:FindFirstChild("RFPurchaseWeatherEvent")
+                if RFPurchaseWeatherEvent then
+                    local success, err = pcall(function()
                         RFPurchaseWeatherEvent:InvokeServer(key)
+                    end)
+                    if success then
+                        NotifySuccess("Weather Purchase", "Purchased " .. weatherName)
+                    else
+                        NotifyError("Weather Purchase Error", tostring(err))
                     end
-                end)
-                if success then
-                    NotifySuccess("Weather Purchase", "Purchased " .. weatherName)
-                else
-                    NotifyError("Weather Purchase Error", tostring(err))
                 end
             end
         end
-    end
-})
-
-Tab4:Toggle({
-    Title = "Auto Buy Best Rod",
-    Callback = function(Value)
-        state.AutoBuyBestRod = Value
-        if Value then
-            startAutoBuyBestRod()
-        end
-        saveConfig()
     end
 })
 
@@ -414,13 +469,13 @@ local Tab5 = Window:Tab({
     Icon = "map-pin",
 })
 
-local Section = Tab5:Section({ 
+Tab5:Section({ 
     Title = "Island",
     TextXAlignment = "Left",
     TextSize = 17,
 })
 
-Dropdown = Tab5:Dropdown({
+Tab5:Dropdown({
     Title = "Select Location",
     Values = {"Esoteric Island", "Konoha", "Coral Refs", "Enchant Room", "Tropical Grove", "Weather Machine", "Treasure Room"},
     Callback = function(Value)
@@ -441,13 +496,13 @@ Dropdown = Tab5:Dropdown({
     end
 })
 
-local Section = Tab5:Section({ 
+Tab5:Section({ 
     Title = "fishing spot",
     TextXAlignment = "Left",
     TextSize = 17,
 })
 
-Dropdown = Tab5:Dropdown({
+Tab5:Dropdown({
     Title = "Select Location",
     Values = {"Spawn", "Konoha", "Coral Refs", "Volcano", "Sysyphus Statue"},
     Callback = function(Value)
@@ -471,11 +526,12 @@ local Tab6 = Window:Tab({
     Icon = "settings",
 })
 
-local Toggle = Tab6:Toggle({
+_G.AntiAFK = false
+_G.AutoReconnect = false
+
+Tab6:Toggle({
     Title = "AntiAFK",
     Desc = "Prevent Roblox from kicking you when idle",
-    Icon = false,
-    Type = false,
     Default = false,
     Callback = function(state)
         _G.AntiAFK = state
@@ -492,26 +548,24 @@ local Toggle = Tab6:Toggle({
                 end
             end)
 
-            game:GetService("StarterGui"):SetCore("SendNotification", {
+            WindUI:Notify({
                 Title = "AntiAFK loaded!",
-                Text = "Coded By Kirsiasc",
-                Button1 = "Okey",
+                Content = "Coded By Kirsiasc",
                 Duration = 5
             })
         else
-            game:GetService("StarterGui"):SetCore("SendNotification", {
+            WindUI:Notify({
                 Title = "AntiAFK Disabled",
-                Text = "Stopped AntiAFK",
+                Content = "Stopped AntiAFK",
                 Duration = 3
             })
         end
     end
 })
 
-local Toggle = Tab6:Toggle({
+Tab6:Toggle({
     Title = "Auto Reconnect",
     Desc = "Automatic reconnect if disconnected",
-    Icon = false,
     Default = false,
     Callback = function(state)
         _G.AutoReconnect = state
@@ -536,10 +590,9 @@ local Toggle = Tab6:Toggle({
     end
 })
 
-local Button = Tab6:Button({
+Tab6:Button({
     Title = "Infinite Yield",
     Desc = "Other Scripts",
-    Locked = false,
     Callback = function()
         loadstring(game:HttpGet('https://raw.githubusercontent.com/DarkNetworks/Infinite-Yield/main/latest.lua'))()
     end
