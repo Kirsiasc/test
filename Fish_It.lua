@@ -14,6 +14,7 @@ local Window = WindUI:CreateWindow({
     Icon = "rbxassetid://125586515064911",
     Author = " Fish It | V1.0.1 ",
     Folder = "AzarineHub",
+    Size = default,
     LiveSearchDropdown = true,
 })
 
