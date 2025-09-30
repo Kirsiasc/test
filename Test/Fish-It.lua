@@ -385,7 +385,7 @@ Tab4:Section({
 })
 
 Tab4:Dropdown({
-    Title = "Select Location",
+    Title = "Select Location Island",
     Values = {"Esoteric Island", "Konoha", "Coral Refs", "Enchant Room", "Tropical Grove", "Weather Machine", "Treasure Room"},
     Callback = function(Value)
         local Locations = {
@@ -412,7 +412,32 @@ Tab4:Section({
 })
 
 Tab4:Dropdown({
-    Title = "Select Location",
+    Title = "Select Location Spot",
+    Values = {"Spawn", "Konoha", "Coral Refs", "Volcano", "Sysyphus Statue"},
+    Callback = function(Value)
+        local Locations = {
+            ["Spawn"] = Vector3.new(33, 9, 2810),
+            ["Konoha"] = Vector3.new(-603, 3, 719),
+            ["Coral Refs"] = Vector3.new(-2855, 47, 1996),
+            ["Volcano"] = Vector3.new(-632, 55, 197),
+            ["Sysyphus Statue"] = Vector3.new(-3693,-136,-1045),
+        }
+
+        local location = Locations[Value]
+        if location and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+            Player.Character.HumanoidRootPart.CFrame = CFrame.new(location)
+        end
+    end
+})
+
+Tab4:Section({ 
+    Title = "Teleport NPC",
+    TextXAlignment = "Left",
+    TextSize = 17,
+})
+
+Tab4:Dropdown({
+    Title = "Select Location NPC",
     Values = {"Spawn", "Konoha", "Coral Refs", "Volcano", "Sysyphus Statue"},
     Callback = function(Value)
         local Locations = {
