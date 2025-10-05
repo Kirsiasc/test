@@ -12,7 +12,7 @@ end
 local Window = WindUI:CreateWindow({
     Title = "AzarineHub",
     Icon = "rbxassetid://125586515064911",
-    Author = " Fish It | V1.0.1 ",
+    Author = " Fish It | V1.0.2 ",
     Folder = "AzarineHub",
     Size = default,
     LiveSearchDropdown = true,
