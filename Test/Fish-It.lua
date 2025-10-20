@@ -779,6 +779,75 @@ Tab6:Toggle({
     end
 })
 
+local BlackScreenGui = Instance.new("ScreenGui")
+BlackScreenGui.Name = "BlackScreenGui"
+BlackScreenGui.Parent = game:GetService("CoreGui")
+BlackScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+BlackScreenGui.ResetOnSpawn = false
+BlackScreenGui.IgnoreGuiInset = true
+
+local BlackFrame = Instance.new("Frame")
+BlackFrame.Size = UDim2.new(1, 0, 1, 0)
+BlackFrame.Position = UDim2.new(0, 0, 0, 0)
+BlackFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+BlackFrame.BackgroundTransparency = 1
+BlackFrame.ZIndex = 999999
+BlackFrame.Parent = BlackScreenGui
+
+local Logo = Instance.new("ImageLabel")
+Logo.Size = UDim2.new(0, 200, 0, 200)
+Logo.Position = UDim2.new(0.5, -100, 0.3, -100)
+Logo.BackgroundTransparency = 1
+Logo.Image = "rbxassetid://125586515064911"
+Logo.ZIndex = 1000000
+Logo.Parent = BlackFrame
+
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(0, 400, 0, 50)
+Title.Position = UDim2.new(0.5, -200, 0.5, 0)
+Title.BackgroundTransparency = 1
+Title.Text = "Azarine Hub"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize = 48
+Title.Font = Enum.Font.SourceSansBold
+Title.ZIndex = 1000000
+Title.Parent = BlackFrame
+
+local DiscordLink = Instance.new("TextLabel")
+DiscordLink.Size = UDim2.new(0, 400, 0, 30)
+DiscordLink.Position = UDim2.new(0.5, -200, 0.6, 0)
+DiscordLink.BackgroundTransparency = 1
+DiscordLink.Text = "discord.gg/8XhQ5Jaahp"
+DiscordLink.TextColor3 = Color3.fromRGB(114, 137, 218)
+DiscordLink.TextSize = 24
+DiscordLink.Font = Enum.Font.SourceSans
+DiscordLink.ZIndex = 1000000
+DiscordLink.Parent = BlackFrame
+
+_G.BlackScreenEnabled = false
+
+Tab6:Toggle({
+    Title = "Black Screen",
+    Desc = "Toggles a full black screen with logo and Discord link",
+    Default = false,
+    Callback = function(state)
+        _G.BlackScreenEnabled = state
+        if state then
+            BlackFrame.BackgroundTransparency = 0
+            Logo.Visible = true
+            Title.Visible = true
+            DiscordLink.Visible = true
+            print("Layar hitam DI AKTIFKAN")
+        else
+            BlackFrame.BackgroundTransparency = 1
+            Logo.Visible = false
+            Title.Visible = false
+            DiscordLink.Visible = false
+            print("Layar hitam DINONAKTIFKAN")
+        end
+    end
+})
+
 local Section = Tab6:Section({ 
     Title = "Config",
 	Icon = "folder-open"
