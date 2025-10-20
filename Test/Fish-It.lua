@@ -61,7 +61,7 @@ Tab1:Button({
 
 Tab1:Paragraph({
     Title = "Version",
-    Desc = "V1.0.3",
+    Desc = "V1.0.1",
 })
 
 Tab1:Paragraph({
@@ -335,6 +335,26 @@ local baitKeyMap = {
 
 local selectedBait = baitNames[1]
 
+local weathers = {
+    ["Rain"] = 1,
+    ["Fog"] = 2,
+    ["Snow"] = 3
+}
+
+local weatherNames = {
+    "Rain (500 Coins)",
+    "Fog (750 Coins)",
+    "Snow (1000 Coins)"
+}
+
+local weatherKeyMap = {
+    ["Rain (500 Coins)"] = "Rain",
+    ["Fog (750 Coins)"] = "Fog",
+    ["Snow (1000 Coins)"] = "Snow"
+}
+
+local selectedWeathers = {}
+
 local function NotifyInfo(title, content)
     WindUI:Notify({
         Title = title,
@@ -403,26 +423,6 @@ Tab3:Button({
     end
 })
 
-local weathers = {
-    ["Rain"] = 1,
-    ["Fog"] = 2,
-    ["Snow"] = 3
-}
-
-local weatherNames = {
-    "Rain (500 Coins)",
-    "Fog (750 Coins)",
-    "Snow (1000 Coins)"
-}
-
-local weatherKeyMap = {
-    ["Rain (500 Coins)"] = "Rain",
-    ["Fog (750 Coins)"] = "Fog",
-    ["Snow (1000 Coins)"] = "Snow"
-}
-
-local selectedWeathers = {}
-
 Tab3:Section({
     Title = "Weather Events",
     Icon = "cloud"
@@ -454,7 +454,6 @@ Tab3:Button({
                         NotifySuccess("Weather Purchase", "Purchased " .. weatherName)
                     else
                         NotifyError("Weather Purchase Error", tostring(err))
-)
                     end
                 end
             end
@@ -769,7 +768,6 @@ Tab6:Toggle({
     Callback = function(state)
         _G.AntiAFK = state
         local VirtualUser = game:GetService("VirtualUser")
-
         if state then
             task.spawn(function()
                 while _G.AntiAFK do
@@ -780,7 +778,6 @@ Tab6:Toggle({
                     end)
                 end
             end)
-
             WindUI:Notify({
                 Title = "AntiAFK loaded!",
                 Content = "Coded By Kirsiasc",
