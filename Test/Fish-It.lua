@@ -19,8 +19,8 @@ local Window = WindUI:CreateWindow({
 })
 
 Window:Tag({
-    Title = "Free",
-    Color = Color3.fromRGB(0, 255, 0),
+    Title = "Version Developer",
+    Color = Color3.fromRGB(0, 0, 0),
 })
 
 local Players = game:GetService("Players")
