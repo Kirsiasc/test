@@ -12,7 +12,7 @@ end
 local Window = WindUI:CreateWindow({
     Title = "AzarineHub",
     Icon = "rbxassetid://125586515064911",
-    Author = " Fish It | V1.0.1 ",
+    Author = " Fish It | V1.0.3 ",
     Folder = "AzarineHub",
     Size = default,
     LiveSearchDropdown = true,
@@ -188,6 +188,54 @@ Tab2:Toggle({
     end
 })
 
+local Toggle = Tab2:Toggle({    
+    Title = "Radar",    
+    Desc = "Toggle fishing radar",    
+    Icon = false,    
+    Type = false,    
+    Default = false,    
+    Callback = function(state)    
+        local ReplicatedStorage = game:GetService("ReplicatedStorage")    
+        local Lighting = game:GetService("Lighting")    
+    
+        local Replion = require(ReplicatedStorage.Packages.Replion)    
+        local Net = require(ReplicatedStorage.Packages.Net)    
+        local spr = require(ReplicatedStorage.Packages.spr)    
+        local Soundbook = require(ReplicatedStorage.Shared.Soundbook)    
+        local ClientTimeController = require(ReplicatedStorage.Controllers.ClientTimeController)    
+        local TextNotificationController = require(ReplicatedStorage.Controllers.TextNotificationController)    
+    
+        local RemoteRadar = Net:RemoteFunction("UpdateFishingRadar")    
+    
+        local Data = Replion.Client:GetReplion("Data")    
+        if Data then    
+            if RemoteRadar:InvokeServer(state) then    
+                Soundbook.Sounds.RadarToggle:Play().PlaybackSpeed = 1 + math.random() * 0.3    
+                local effect = Lighting:FindFirstChildWhichIsA("ColorCorrectionEffect")    
+                if effect then    
+                    spr.stop(effect)    
+                    local profile = ClientTimeController:_getLightingProfile()    
+                    local cc = (profile and profile.ColorCorrection) and profile.ColorCorrection or {}    
+                    if not cc.Brightness then cc.Brightness = 0.04 end    
+                    if not cc.TintColor then cc.TintColor = Color3.fromRGB(255, 255, 255) end    
+                    effect.TintColor = Color3.fromRGB(42, 226, 118)                        effect.Brightness = 0.4    
+                    spr.target(effect, 1, 1, cc)    
+                end    
+                spr.stop(Lighting)    
+                Lighting.ExposureCompensation = 1    
+                spr.target(Lighting, 1, 2, {    
+                    ["ExposureCompensation"] = 0    
+                })    
+                TextNotificationController:DeliverNotification({    
+                    ["Type"] = "Text",    
+                    ["Text"] = ("Radar: %*"):format(state and "Enabled" or "Disabled"),    
+                    ["TextColor"] = state and {["R"] = 9,["G"] = 255,["B"] = 0} or {["R"] = 255,["G"] = 0,["B"] = 0}    
+                })    
+            end    
+        end    
+    end    
+})
+
 local Tab3 = Window:Tab({
     Title = "Shop",
     Icon = "badge-dollar-sign",
@@ -338,7 +386,7 @@ Tab3:Section({
 })
 
 Tab3:Dropdown({
-    Title = "Select Weather(s)",
+    Title = "Select Weathers",
     Values = weatherNames,
     Multi = true,
     Value = selectedWeathers,
@@ -377,8 +425,7 @@ local Tab4 = Window:Tab({
 
 local Section = Tab4:Section({ 
     Title = "Island",
-    TextXAlignment = "Left",
-    TextSize = 17,
+    Icon = "tree-palm"
 })
 
 local IslandLocations = {
@@ -420,8 +467,7 @@ Tab4:Button({
 
 local Section = Tab4:Section({ 
     Title = "Fishing Spot",
-    TextXAlignment = "Left",
-    TextSize = 17,
+    Icon = "fish"
 })
 
 local FishingLocations = {
@@ -466,8 +512,7 @@ Tab4:Button({
 
 local Section = Tab4:Section({
     Title = "Location NPC",
-    TextXAlignment = "Left",
-    TextSize = 17,
+    Icon = "bot"
 })
 
 local NPC_Locations = {
@@ -518,8 +563,7 @@ Tab4:Button({
 
 local Section = Tab4:Section({
     Title = "Event Teleport",
-    TextXAlignment = "Left",
-    TextSize = 17,
+    Icon = "antenna"
 })
 
 local Event_Locations = {
@@ -731,6 +775,96 @@ Tab6:Toggle({
                     end
                 end
             end)
+        end
+    end
+})
+
+local Section = Tab6:Section({ 
+    Title = "Config",
+	Icon = "folder-open"
+})
+
+local ConfigFolder = "AzarineHub/Configs"
+if not isfolder("AzarineHub") then makefolder("AzarineHub") end
+if not isfolder(ConfigFolder) then makefolder(ConfigFolder) end
+
+local ConfigName = "default.json"
+
+local function GetConfig()
+    return {
+        WalkSpeed = Humanoid.WalkSpeed,
+        JumpPower = _G.CustomJumpPower or 50,
+        InfiniteJump = _G.InfiniteJump or false,
+        AutoSell = _G.AutoSell or false,
+        InstantCatch = _G.InstantCatch or false,
+        AntiAFK = _G.AntiAFK or false,
+        AutoReconnect = _G.AutoReconnect or false,
+    }
+end
+
+local function ApplyConfig(data)
+    if data.WalkSpeed then 
+        Humanoid.WalkSpeed = data.WalkSpeed 
+    end
+    if data.JumpPower then
+        _G.CustomJumpPower = data.JumpPower
+        local humanoid = Player.Character and Player.Character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            humanoid.UseJumpPower = true
+            humanoid.JumpPower = data.JumpPower
+        end
+    end
+    if data.InfiniteJump ~= nil then
+        _G.InfiniteJump = data.InfiniteJump
+    end
+    if data.AutoSell ~= nil then
+        _G.AutoSell = data.AutoSell
+    end
+    if data.InstantCatch ~= nil then
+        _G.InstantCatch = data.InstantCatch
+    end
+    if data.AntiAFK ~= nil then
+        _G.AntiAFK = data.AntiAFK
+    end
+    if data.AutoReconnect ~= nil then
+        _G.AutoReconnect = data.AutoReconnect
+    end
+end
+
+Tab6:Button({
+    Title = "Save Config",
+    Desc = "Save all settings",
+    Callback = function()
+        local data = GetConfig()
+        writefile(ConfigFolder.."/"..ConfigName, game:GetService("HttpService"):JSONEncode(data))
+        print("✅ Config saved!")
+    end
+})
+
+Tab6:Button({
+    Title = "Load Config",
+    Desc = "Use saved config",
+    Callback = function()
+        if isfile(ConfigFolder.."/"..ConfigName) then
+            local data = readfile(ConfigFolder.."/"..ConfigName)
+            local decoded = game:GetService("HttpService"):JSONDecode(data)
+            ApplyConfig(decoded)
+            print("✅ Config applied!")
+        else
+            warn("⚠️ Config not found, please Save first.")
+        end
+    end
+})
+
+Tab6:Button({
+    Title = "Delete Config",
+    Desc = "Delete saved config",
+    Callback = function()
+        if isfile(ConfigFolder.."/"..ConfigName) then
+            delfile(ConfigFolder.."/"..ConfigName)
+            print("🗑 Config deleted!")
+        else
+            warn("⚠️ No config to delete.")
         end
     end
 })
