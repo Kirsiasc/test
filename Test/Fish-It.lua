@@ -193,44 +193,76 @@ local Tab3 = Window:Tab({
     Icon = "badge-dollar-sign",
 })
 
-local rodNames = {"Basic Rod", "Old Rod", "Fishing Rod"}
-local selectedRod = "Basic Rod"
-local rodKeyMap = {
-    ["Basic Rod"] = "basic",
-    ["Old Rod"] = "old", 
-    ["Fishing Rod"] = "fishing"
-}
-local rods = {
-    basic = 1,
-    old = 2,
-    fishing = 3
-}
+local ReplicatedStorage = game:GetService("ReplicatedStorage")  
+local RFPurchaseFishingRod = ReplicatedStorage.Packages._Index["sleitnick_net@0.2.0"].net["RF/PurchaseFishingRod"]  
 
-local baitNames = {"Basic Bait", "Advanced Bait", "Pro Bait"}
-local selectedBait = "Basic Bait"
-local baitKeyMap = {
-    ["Basic Bait"] = "basic",
-    ["Advanced Bait"] = "advanced",
-    ["Pro Bait"] = "pro"
-}
-local baits = {
-    basic = 10,
-    advanced = 20,
-    pro = 30
-}
+local rods = {  
+    ["Luck Rod"] = 79,  
+    ["Carbon Rod"] = 76,  
+    ["Grass Rod"] = 85,  
+    ["Demascus Rod"] = 77,  
+    ["Ice Rod"] = 78,  
+    ["Lucky Rod"] = 4,  
+    ["Midnight Rod"] = 80,  
+    ["Steampunk Rod"] = 6,  
+    ["Chrome Rod"] = 7,  
+    ["Astral Rod"] = 5,  
+    ["Ares Rod"] = 126,  
+    ["Angler Rod"] = 168,
+    ["Bamboo Rod"] = 258
+}  
 
-local weatherNames = {"Rain", "Storm", "Sunny"}
-local selectedWeathers = {}
-local weatherKeyMap = {
-    ["Rain"] = "rain",
-    ["Storm"] = "storm", 
-    ["Sunny"] = "sunny"
-}
-local weathers = {
-    rain = 1,
-    storm = 2,
-    sunny = 3
-}
+local rodNames = {  
+    "Luck Rod (350 Coins)", "Carbon Rod (900 Coins)", "Grass Rod (1.5k Coins)", "Demascus Rod (3k Coins)",  
+    "Ice Rod (5k Coins)", "Lucky Rod (15k Coins)", "Midnight Rod (50k Coins)", "Steampunk Rod (215k Coins)",  
+    "Chrome Rod (437k Coins)", "Astral Rod (1M Coins)", "Ares Rod (3M Coins)", "Angler Rod (8M Coins)",
+    "Bamboo Rod (12M Coins)"
+}  
+
+local rodKeyMap = {  
+    ["Luck Rod (350 Coins)"]="Luck Rod",  
+    ["Carbon Rod (900 Coins)"]="Carbon Rod",  
+    ["Grass Rod (1.5k Coins)"]="Grass Rod",  
+    ["Demascus Rod (3k Coins)"]="Demascus Rod",  
+    ["Ice Rod (5k Coins)"]="Ice Rod",  
+    ["Lucky Rod (15k Coins)"]="Lucky Rod",  
+    ["Midnight Rod (50k Coins)"]="Midnight Rod",  
+    ["Steampunk Rod (215k Coins)"]="Steampunk Rod",  
+    ["Chrome Rod (437k Coins)"]="Chrome Rod",  
+    ["Astral Rod (1M Coins)"]="Astral Rod",  
+    ["Ares Rod (3M Coins)"]="Ares Rod",  
+    ["Angler Rod (8M Coins)"]="Angler Rod",
+    ["Bamboo Rod (12M Coins)"]="Bamboo Rod"
+}  
+
+local selectedRod = rodNames[1]  
+
+Tab4:Dropdown({  
+    Title = "Select Rod",  
+    Values = rodNames,  
+    Value = selectedRod,  
+    Callback = function(value)  
+        selectedRod = value  
+        WindUI:Notify({Title="Rod Selected", Content=value, Duration=3})  
+    end  
+})  
+
+Tab4:Button({  
+    Title="Buy Rod",  
+    Callback=function()  
+        local key = rodKeyMap[selectedRod]  
+        if key and rods[key] then  
+            local success, err = pcall(function()  
+                RFPurchaseFishingRod:InvokeServer(rods[key])  
+            end)  
+            if success then  
+                WindUI:Notify({Title="Rod Purchase", Content="Purchased "..selectedRod, Duration=3})  
+            else  
+                WindUI:Notify({Title="Rod Purchase Error", Content=tostring(err), Duration=5})  
+            end  
+        end  
+    end  
+})
 
 local function NotifyInfo(title, content)
     AzarineUI:Notify({
@@ -262,41 +294,6 @@ end
 Tab3:Paragraph({
     Title = "Test Teature",
     Desc = "This is still in testing, maybe the next update can be used.",
-})
-
-Tab3:Section({
-    Title = "Fishing Rods",
-    Icon = "fish"
-})
-
-Tab3:Dropdown({
-    Title = "Select Rod",
-    Values = rodNames,
-    Value = selectedRod,
-    Callback = function(value)
-        selectedRod = value
-        NotifyInfo("Rod Selected", value)
-    end
-})
-
-Tab3:Button({
-    Title = "Buy Rod",
-    Callback = function()
-        local key = rodKeyMap[selectedRod]
-        if key and rods[key] then
-            local RFPurchaseFishingRod = RepStorage:FindFirstChild("RFPurchaseFishingRod")
-            if RFPurchaseFishingRod then
-                local success, err = pcall(function()
-                    RFPurchaseFishingRod:InvokeServer(rods[key])
-                end)
-                if success then
-                    NotifySuccess("Rod Purchase", "Purchased " .. selectedRod)
-                else
-                    NotifyError("Rod Purchase Error", tostring(err))
-                end
-            end
-        end
-    end
 })
 
 Tab3:Section({
@@ -378,79 +375,189 @@ local Tab4 = Window:Tab({
     Icon = "map-pin",
 })
 
-Tab4:Section({ 
+local Section = Tab4:Section({ 
     Title = "Island",
     TextXAlignment = "Left",
     TextSize = 17,
 })
 
-Tab4:Dropdown({
-    Title = "Select Location Island",
-    Values = {"Esoteric Island", "Konoha", "Coral Refs", "Enchant Room", "Tropical Grove", "Weather Machine", "Treasure Room"},
-    Callback = function(Value)
-        local Locations = {
-            ["Esoteric Island"] = Vector3.new(1990, 5, 1398),
-            ["Konoha"] = Vector3.new(-603, 3, 719),
-            ["Coral Refs"] = Vector3.new(-2855, 47, 1996),
-            ["Enchant Room"] = Vector3.new(3221, -1303, 1406),
-            ["Treasure Room"] = Vector3.new(-3600, -267, -1575),
-            ["Tropical Grove"] = Vector3.new(-2091, 6, 3703),
-            ["Weather Machine"] = Vector3.new(-1508, 6, 1895),
-        }
+local IslandLocations = {
+    ["Ancient Junggle"] = Vector3.new(1252,7,-153),
+    ["Coral Refs"] = Vector3.new(-2855, 47, 1996),
+    ["Enchant Room"] = Vector3.new(3221, -1303, 1406),
+    ["Esoteric Island"] = Vector3.new(1990, 5, 1398),
+    ["Konoha"] = Vector3.new(-603, 3, 719),
+    ["Treasure Room"] = Vector3.new(-3600, -267, -1575),
+    ["Tropical Grove"] = Vector3.new(-2091, 6, 3703),
+    ["Weather Machine"] = Vector3.new(-1508, 6, 1895),
+}
 
-        local location = Locations[Value]
-        if location and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-            Player.Character.HumanoidRootPart.CFrame = CFrame.new(location)
+local SelectedIsland = nil
+
+local IslandDropdown = Tab4:Dropdown({
+    Title = "Select Island",
+    Values = (function()
+        local keys = {}
+        for name in pairs(IslandLocations) do
+            table.insert(keys, name)
+        end
+        table.sort(keys)
+        return keys
+    end)(),
+    Callback = function(Value)
+        SelectedIsland = Value
+    end
+})
+
+Tab4:Button({
+    Title = "Teleport to Island",
+    Callback = function()
+        if SelectedIsland and IslandLocations[SelectedIsland] and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+            Player.Character.HumanoidRootPart.CFrame = CFrame.new(IslandLocations[SelectedIsland])
         end
     end
 })
 
-Tab4:Section({ 
+local Section = Tab4:Section({ 
     Title = "Fishing Spot",
     TextXAlignment = "Left",
     TextSize = 17,
 })
 
-Tab4:Dropdown({
-    Title = "Select Location Spot",
-    Values = {"Spawn", "Konoha", "Coral Refs", "Volcano", "Sysyphus Statue"},
-    Callback = function(Value)
-        local Locations = {
-            ["Spawn"] = Vector3.new(33, 9, 2810),
-            ["Konoha"] = Vector3.new(-603, 3, 719),
-            ["Coral Refs"] = Vector3.new(-2855, 47, 1996),
-            ["Volcano"] = Vector3.new(-632, 55, 197),
-            ["Sysyphus Statue"] = Vector3.new(-3693,-136,-1045),
-        }
+local FishingLocations = {
+    ["Coral Refs"] = Vector3.new(-2855, 47, 1996),
+    ["Konoha"] = Vector3.new(-603, 3, 719),
+    ["Levers 1"] = Vector3.new(1475,4,-847),
+    ["Levers 2"] = Vector3.new(882,5,-321),
+    ["levers 3"] = Vector3.new(1425,6,126),
+    ["levers 4"] = Vector3.new(1837,4,-309),
+    ["Sacred Temple"] = Vector3.new(1475,-22,-632),
+    ["Spawn"] = Vector3.new(33, 9, 2810),
+    ["Sysyphus Statue"] = Vector3.new(-3693,-136,-1045),
+    ["Underground Cellar"] = Vector3.new(2135,-92,-695),
+    ["Volcano"] = Vector3.new(-632, 55, 197),
+}
 
-        local location = Locations[Value]
-        if location and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-            Player.Character.HumanoidRootPart.CFrame = CFrame.new(location)
+local SelectedFishing = nil
+
+local FishingDropdown = Tab4:Dropdown({
+    Title = "Select Spot",
+    Values = (function()
+        local keys = {}
+        for name in pairs(FishingLocations) do
+            table.insert(keys, name)
+        end
+        table.sort(keys)
+        return keys
+    end)(),
+    Callback = function(Value)
+        SelectedFishing = Value
+    end
+})
+
+Tab4:Button({
+    Title = "Teleport to Fishing Spot",
+    Callback = function()
+        if SelectedFishing and FishingLocations[SelectedFishing] and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+            Player.Character.HumanoidRootPart.CFrame = CFrame.new(FishingLocations[SelectedFishing])
         end
     end
 })
 
-Tab4:Section({ 
-    Title = "Teleport NPC",
+local Section = Tab4:Section({
+    Title = "Location NPC",
     TextXAlignment = "Left",
     TextSize = 17,
 })
 
-Tab4:Dropdown({
-    Title = "Select Location NPC",
-    Values = {"Spawn", "Konoha", "Coral Refs", "Volcano", "Sysyphus Statue"},
-    Callback = function(Value)
-        local Locations = {
-            ["Spawn"] = Vector3.new(33, 9, 2810),
-            ["Konoha"] = Vector3.new(-603, 3, 719),
-            ["Coral Refs"] = Vector3.new(-2855, 47, 1996),
-            ["Volcano"] = Vector3.new(-632, 55, 197),
-            ["Sysyphus Statue"] = Vector3.new(-3693,-136,-1045),
-        }
+local NPC_Locations = {
+    ["Alex"] = Vector3.new(43,17,2876),
+    ["Aura kid"] = Vector3.new(70,17,2835),
+    ["Billy Bob"] = Vector3.new(84,17,2876),
+    ["Boat Expert"] = Vector3.new(32,9,2789),
+    ["Esoteric Gatekeeper"] = Vector3.new(2101,-30,1350),
+    ["Jeffery"] = Vector3.new(-2771,4,2132),
+    ["Joe"] = Vector3.new(144,20,2856),
+    ["Jones"] = Vector3.new(-671,16,596),
+    ["Lava Fisherman"] = Vector3.new(-593,59,130),
+    ["McBoatson"] = Vector3.new(-623,3,719),
+    ["Ram"] = Vector3.new(-2838,47,1962),
+    ["Ron"] = Vector3.new(-48,17,2856),
+    ["Scott"] = Vector3.new(-19,9,2709),
+    ["Scientist"] = Vector3.new(-6,17,2881),
+    ["Seth"] = Vector3.new(107,17,2877),
+    ["Silly Fisherman"] = Vector3.new(97,9,2694),
+    ["Tim"] = Vector3.new(-604,16,609),
+}
 
-        local location = Locations[Value]
-        if location and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-            Player.Character.HumanoidRootPart.CFrame = CFrame.new(location)
+local SelectedNPC = nil
+
+local NPCDropdown = Tab4:Dropdown({
+    Title = "Select NPC",
+    Values = (function()
+        local keys = {}
+        for name in pairs(NPC_Locations) do
+            table.insert(keys, name)
+        end
+        table.sort(keys)
+        return keys
+    end)(),
+    Callback = function(Value)
+        SelectedNPC = Value
+    end
+})
+
+Tab4:Button({
+    Title = "Teleport to NPC",
+    Callback = function()
+        if SelectedNPC and NPC_Locations[SelectedNPC] and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+            Player.Character.HumanoidRootPart.CFrame = CFrame.new(NPC_Locations[SelectedNPC])
+        end
+    end
+})
+
+local Section = Tab4:Section({
+    Title = "Event Teleport",
+    TextXAlignment = "Left",
+    TextSize = 17,
+})
+
+local Event_Locations = {
+    ["Black Hole"] = Vector3.new(883, -1.4, 2542),
+    ["Ghost Shark Hunt"] = Vector3.new(489.559, -1.35, 25.406),
+    ["Megalodon Hunt"] = Vector3.new(-1076.3, -1.4, 1676.2),
+    ["Meteor Rain"] = Vector3.new(383, -1.4, 2452),
+    ["Shark Hunt"] = Vector3.new(1.65, -1.35, 2095.725),
+    ["Storm Hunt"] = Vector3.new(1735.85, -1.4, -208.425),
+    ["Worm Hunt"] = Vector3.new(1591.55, -1.4, -105.925),
+}
+
+local ActiveEvent = nil
+
+local EventDropdown = Tab4:Dropdown({
+    Title = "Select Event",
+    Values = (function()
+        local keys = {}
+        for name in pairs(Event_Locations) do
+            table.insert(keys, name)
+        end
+        table.sort(keys)
+        return keys
+    end)(),
+    Callback = function(Value)
+        ActiveEvent = Value
+    end
+})
+
+Tab4:Button({
+    Title = "Teleport to Event",
+    Callback = function()
+        local Player = game.Players.LocalPlayer
+        local Char = Player.Character or Player.CharacterAdded:Wait()
+        local HRP = Char:FindFirstChild("HumanoidRootPart")
+        if not HRP then return end
+        if ActiveEvent and Event_Locations[ActiveEvent] then
+            HRP.CFrame = CFrame.new(Event_Locations[ActiveEvent])
         end
     end
 })
