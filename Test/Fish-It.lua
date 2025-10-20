@@ -61,7 +61,7 @@ Tab1:Button({
 
 Tab1:Paragraph({
     Title = "Version",
-    Desc = "V1.0.1",
+    Desc = "V1.0.3",
 })
 
 Tab1:Paragraph({
