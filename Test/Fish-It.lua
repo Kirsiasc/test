@@ -3,16 +3,16 @@ local success, WindUI = pcall(function()
 end)
 
 if not success or not WindUI then
-    warn("âš ï¸ UI failed to load!")
+    warn("⚠️ UI failed to load!")
     return
 else
-    print("âœ“ UI loaded successfully!")
+    print("✓ UI loaded successfully!")
 end
 
 local Window = WindUI:CreateWindow({
     Title = "AzarineHub",
     Icon = "rbxassetid://125586515064911",
-    Author = " Fish It | V1.0.3 ",
+    Author = "Fish It | V1.0.3",
     Folder = "AzarineHub",
     Size = default,
     LiveSearchDropdown = true,
@@ -123,12 +123,12 @@ Tab2:Toggle({
     Default = false,
     Callback = function(value) 
         _G.AutoFishing = value
-		WindUI:Notify({
-    		Title = "Notification",
-    		Content = "Started AutoFish Thread",
-    		Icon = "fish",
-    		Duration = 3,
-		})
+        WindUI:Notify({
+            Title = "Notification",
+            Content = "Started AutoFish Thread",
+            Icon = "fish",
+            Duration = 3,
+        })
     end
 })
 
@@ -137,7 +137,6 @@ local RepStorage = game:GetService("ReplicatedStorage")
 spawn(function()
     while wait() do
         if _G.AutoFishing then
-			
             pcall(function()
                 local char = Player.Character or Player.CharacterAdded:Wait()
                 if char:FindFirstChild("!!!FISHING_VIEW_MODEL!!!") then
@@ -188,7 +187,7 @@ Tab2:Toggle({
     end
 })
 
-local Toggle = Tab2:Toggle({    
+Tab2:Toggle({    
     Title = "Radar",    
     Desc = "Toggle fishing radar",    
     Icon = false,    
@@ -197,16 +196,13 @@ local Toggle = Tab2:Toggle({
     Callback = function(state)    
         local ReplicatedStorage = game:GetService("ReplicatedStorage")    
         local Lighting = game:GetService("Lighting")    
-    
         local Replion = require(ReplicatedStorage.Packages.Replion)    
         local Net = require(ReplicatedStorage.Packages.Net)    
         local spr = require(ReplicatedStorage.Packages.spr)    
         local Soundbook = require(ReplicatedStorage.Shared.Soundbook)    
         local ClientTimeController = require(ReplicatedStorage.Controllers.ClientTimeController)    
         local TextNotificationController = require(ReplicatedStorage.Controllers.TextNotificationController)    
-    
         local RemoteRadar = Net:RemoteFunction("UpdateFishingRadar")    
-    
         local Data = Replion.Client:GetReplion("Data")    
         if Data then    
             if RemoteRadar:InvokeServer(state) then    
@@ -218,7 +214,8 @@ local Toggle = Tab2:Toggle({
                     local cc = (profile and profile.ColorCorrection) and profile.ColorCorrection or {}    
                     if not cc.Brightness then cc.Brightness = 0.04 end    
                     if not cc.TintColor then cc.TintColor = Color3.fromRGB(255, 255, 255) end    
-                    effect.TintColor = Color3.fromRGB(42, 226, 118)                        effect.Brightness = 0.4    
+                    effect.TintColor = Color3.fromRGB(42, 226, 118)    
+                    effect.Brightness = 0.4    
                     spr.target(effect, 1, 1, cc)    
                 end    
                 spr.stop(Lighting)    
@@ -228,8 +225,8 @@ local Toggle = Tab2:Toggle({
                 })    
                 TextNotificationController:DeliverNotification({    
                     ["Type"] = "Text",    
-                    ["Text"] = ("Radar: %*"):format(state and "Enabled" or "Disabled"),    
-                    ["TextColor"] = state and {["R"] = 9,["G"] = 255,["B"] = 0} or {["R"] = 255,["G"] = 0,["B"] = 0}    
+                    ["Text"] = ("Radar: %s"):format(state and "Enabled" or "Disabled"),    
+                    ["TextColor"] = state and {R = 9, G = 255, B = 0} or {R = 255, G = 0, B = 0}    
                 })    
             end    
         end    
@@ -268,61 +265,87 @@ local rodNames = {
 }  
 
 local rodKeyMap = {  
-    ["Luck Rod (350 Coins)"]="Luck Rod",  
-    ["Carbon Rod (900 Coins)"]="Carbon Rod",  
-    ["Grass Rod (1.5k Coins)"]="Grass Rod",  
-    ["Demascus Rod (3k Coins)"]="Demascus Rod",  
-    ["Ice Rod (5k Coins)"]="Ice Rod",  
-    ["Lucky Rod (15k Coins)"]="Lucky Rod",  
-    ["Midnight Rod (50k Coins)"]="Midnight Rod",  
-    ["Steampunk Rod (215k Coins)"]="Steampunk Rod",  
-    ["Chrome Rod (437k Coins)"]="Chrome Rod",  
-    ["Astral Rod (1M Coins)"]="Astral Rod",  
-    ["Ares Rod (3M Coins)"]="Ares Rod",  
-    ["Angler Rod (8M Coins)"]="Angler Rod",
-    ["Bamboo Rod (12M Coins)"]="Bamboo Rod"
+    ["Luck Rod (350 Coins)"] = "Luck Rod",  
+    ["Carbon Rod (900 Coins)"] = "Carbon Rod",  
+    ["Grass Rod (1.5k Coins)"] = "Grass Rod",  
+    ["Demascus Rod (3k Coins)"] = "Demascus Rod",  
+    ["Ice Rod (5k Coins)"] = "Ice Rod",  
+    ["Lucky Rod (15k Coins)"] = "Lucky Rod",  
+    ["Midnight Rod (50k Coins)"] = "Midnight Rod",  
+    ["Steampunk Rod (215k Coins)"] = "Steampunk Rod",  
+    ["Chrome Rod (437k Coins)"] = "Chrome Rod",  
+    ["Astral Rod (1M Coins)"] = "Astral Rod",  
+    ["Ares Rod (3M Coins)"] = "Ares Rod",  
+    ["Angler Rod (8M Coins)"] = "Angler Rod",
+    ["Bamboo Rod (12M Coins)"] = "Bamboo Rod"
 }  
 
 local selectedRod = rodNames[1]  
 
-Tab4:Dropdown({  
+Tab3:Dropdown({  
     Title = "Select Rod",  
     Values = rodNames,  
     Value = selectedRod,  
     Callback = function(value)  
         selectedRod = value  
-        WindUI:Notify({Title="Rod Selected", Content=value, Duration=3})  
+        WindUI:Notify({Title = "Rod Selected", Content = value, Duration = 3})  
     end  
 })  
 
-Tab4:Button({  
-    Title="Buy Rod",  
-    Callback=function()  
+Tab3:Button({  
+    Title = "Buy Rod",  
+    Callback = function()  
         local key = rodKeyMap[selectedRod]  
         if key and rods[key] then  
             local success, err = pcall(function()  
                 RFPurchaseFishingRod:InvokeServer(rods[key])  
             end)  
             if success then  
-                WindUI:Notify({Title="Rod Purchase", Content="Purchased "..selectedRod, Duration=3})  
+                WindUI:Notify({Title = "Rod Purchase", Content = "Purchased " .. selectedRod, Duration = 3})  
             else  
-                WindUI:Notify({Title="Rod Purchase Error", Content=tostring(err), Duration=5})  
+                WindUI:Notify({Title = "Rod Purchase Error", Content = tostring(err), Duration = 5})  
             end  
         end  
     end  
 })
 
+local baits = {
+    ["Common Bait"] = 1,
+    ["Uncommon Bait"] = 2,
+    ["Rare Bait"] = 3,
+    ["Epic Bait"] = 4,
+    ["Legendary Bait"] = 5
+}
+
+local baitNames = {
+    "Common Bait (50 Coins)",
+    "Uncommon Bait (100 Coins)",
+    "Rare Bait (200 Coins)",
+    "Epic Bait (500 Coins)",
+    "Legendary Bait (1000 Coins)"
+}
+
+local baitKeyMap = {
+    ["Common Bait (50 Coins)"] = "Common Bait",
+    ["Uncommon Bait (100 Coins)"] = "Uncommon Bait",
+    ["Rare Bait (200 Coins)"] = "Rare Bait",
+    ["Epic Bait (500 Coins)"] = "Epic Bait",
+    ["Legendary Bait (1000 Coins)"] = "Legendary Bait"
+}
+
+local selectedBait = baitNames[1]
+
 local function NotifyInfo(title, content)
-    AzarineUI:Notify({
+    WindUI:Notify({
         Title = title,
         Content = content,
-		Icon = "info",
+        Icon = "info",
         Duration = 3
     })
 end
 
 local function NotifySuccess(title, content)
-    AzarineUI:Notify({
+    WindUI:Notify({
         Title = title,
         Content = content,
         Icon = "check",
@@ -340,7 +363,7 @@ local function NotifyError(title, content)
 end
 
 Tab3:Paragraph({
-    Title = "Test Teature",
+    Title = "Test Feature",
     Desc = "This is still in testing, maybe the next update can be used.",
 })
 
@@ -365,7 +388,7 @@ Tab3:Button({
         local key = baitKeyMap[selectedBait]
         if key and baits[key] then
             local amount = baits[key]
-            local RFPurchaseBait = RepStorage:FindFirstChild("RFPurchaseBait")
+            local RFPurchaseBait = RepStorage.Packages._Index["sleitnick_net@0.2.0"].net["RF/PurchaseBait"]
             if RFPurchaseBait then
                 local success, err = pcall(function()
                     RFPurchaseBait:InvokeServer(amount)
@@ -379,6 +402,26 @@ Tab3:Button({
         end
     end
 })
+
+local weathers = {
+    ["Rain"] = 1,
+    ["Fog"] = 2,
+    ["Snow"] = 3
+}
+
+local weatherNames = {
+    "Rain (500 Coins)",
+    "Fog (750 Coins)",
+    "Snow (1000 Coins)"
+}
+
+local weatherKeyMap = {
+    ["Rain (500 Coins)"] = "Rain",
+    ["Fog (750 Coins)"] = "Fog",
+    ["Snow (1000 Coins)"] = "Snow"
+}
+
+local selectedWeathers = {}
 
 Tab3:Section({
     Title = "Weather Events",
@@ -402,7 +445,7 @@ Tab3:Button({
         for _, weatherName in ipairs(selectedWeathers) do
             local key = weatherKeyMap[weatherName]
             if key and weathers[key] then
-                local RFPurchaseWeatherEvent = RepStorage:FindFirstChild("RFPurchaseWeatherEvent")
+                local RFPurchaseWeatherEvent = RepStorage.Packages._Index["sleitnick_net@0.2.0"].net["RF/PurchaseWeatherEvent"]
                 if RFPurchaseWeatherEvent then
                     local success, err = pcall(function()
                         RFPurchaseWeatherEvent:InvokeServer(key)
@@ -411,6 +454,7 @@ Tab3:Button({
                         NotifySuccess("Weather Purchase", "Purchased " .. weatherName)
                     else
                         NotifyError("Weather Purchase Error", tostring(err))
+)
                     end
                 end
             end
@@ -429,8 +473,8 @@ local Section = Tab4:Section({
 })
 
 local IslandLocations = {
-    ["Ancient Junggle"] = Vector3.new(1252,7,-153),
-    ["Coral Refs"] = Vector3.new(-2855, 47, 1996),
+    ["Ancient Jungle"] = Vector3.new(1252, 7, -153),
+    ["Coral Reefs"] = Vector3.new(-2855, 47, 1996),
     ["Enchant Room"] = Vector3.new(3221, -1303, 1406),
     ["Esoteric Island"] = Vector3.new(1990, 5, 1398),
     ["Konoha"] = Vector3.new(-603, 3, 719),
@@ -471,16 +515,16 @@ local Section = Tab4:Section({
 })
 
 local FishingLocations = {
-    ["Coral Refs"] = Vector3.new(-2855, 47, 1996),
+    ["Coral Reefs"] = Vector3.new(-2855, 47, 1996),
     ["Konoha"] = Vector3.new(-603, 3, 719),
-    ["Levers 1"] = Vector3.new(1475,4,-847),
-    ["Levers 2"] = Vector3.new(882,5,-321),
-    ["levers 3"] = Vector3.new(1425,6,126),
-    ["levers 4"] = Vector3.new(1837,4,-309),
-    ["Sacred Temple"] = Vector3.new(1475,-22,-632),
+    ["Levers 1"] = Vector3.new(1475, 4, -847),
+    ["Levers 2"] = Vector3.new(882, 5, -321),
+    ["Levers 3"] = Vector3.new(1425, 6, 126),
+    ["Levers 4"] = Vector3.new(1837, 4, -309),
+    ["Sacred Temple"] = Vector3.new(1475, -22, -632),
     ["Spawn"] = Vector3.new(33, 9, 2810),
-    ["Sysyphus Statue"] = Vector3.new(-3693,-136,-1045),
-    ["Underground Cellar"] = Vector3.new(2135,-92,-695),
+    ["Sisyphus Statue"] = Vector3.new(-3693, -136, -1045),
+    ["Underground Cellar"] = Vector3.new(2135, -92, -695),
     ["Volcano"] = Vector3.new(-632, 55, 197),
 }
 
@@ -516,23 +560,23 @@ local Section = Tab4:Section({
 })
 
 local NPC_Locations = {
-    ["Alex"] = Vector3.new(43,17,2876),
-    ["Aura kid"] = Vector3.new(70,17,2835),
-    ["Billy Bob"] = Vector3.new(84,17,2876),
-    ["Boat Expert"] = Vector3.new(32,9,2789),
-    ["Esoteric Gatekeeper"] = Vector3.new(2101,-30,1350),
-    ["Jeffery"] = Vector3.new(-2771,4,2132),
-    ["Joe"] = Vector3.new(144,20,2856),
-    ["Jones"] = Vector3.new(-671,16,596),
-    ["Lava Fisherman"] = Vector3.new(-593,59,130),
-    ["McBoatson"] = Vector3.new(-623,3,719),
-    ["Ram"] = Vector3.new(-2838,47,1962),
-    ["Ron"] = Vector3.new(-48,17,2856),
-    ["Scott"] = Vector3.new(-19,9,2709),
-    ["Scientist"] = Vector3.new(-6,17,2881),
-    ["Seth"] = Vector3.new(107,17,2877),
-    ["Silly Fisherman"] = Vector3.new(97,9,2694),
-    ["Tim"] = Vector3.new(-604,16,609),
+    ["Alex"] = Vector3.new(43, 17, 2876),
+    ["Aura kid"] = Vector3.new(70, 17, 2835),
+    ["Billy Bob"] = Vector3.new(84, 17, 2876),
+    ["Boat Expert"] = Vector3.new(32, 9, 2789),
+    ["Esoteric Gatekeeper"] = Vector3.new(2101, -30, 1350),
+    ["Jeffery"] = Vector3.new(-2771, 4, 2132),
+    ["Joe"] = Vector3.new(144, 20, 2856),
+    ["Jones"] = Vector3.new(-671, 16, 596),
+    ["Lava Fisherman"] = Vector3.new(-593, 59, 130),
+    ["McBoatson"] = Vector3.new(-623, 3, 719),
+    ["Ram"] = Vector3.new(-2838, 47, 1962),
+    ["Ron"] = Vector3.new(-48, 17, 2856),
+    ["Scott"] = Vector3.new(-19, 9, 2709),
+    ["Scientist"] = Vector3.new(-6, 17, 2881),
+    ["Seth"] = Vector3.new(107, 17, 2877),
+    ["Silly Fisherman"] = Vector3.new(97, 9, 2694),
+    ["Tim"] = Vector3.new(-604, 16, 609),
 }
 
 local SelectedNPC = nil
@@ -626,7 +670,7 @@ Tab5:Input({
                 print("WalkSpeed set to: " .. speed)
             else
                 humanoid.WalkSpeed = 16
-                print("âš ï¸ Invalid input, set to default (16)")
+                print("⚠️ Invalid input, set to default (16)")
             end
         end
     end
@@ -649,7 +693,7 @@ Tab5:Input({
             end
             print("Jump Power set to: " .. value)
         else
-            warn("âš ï¸ Must be number and minimum 50!")
+            warn("⚠️ Must be number and minimum 50!")
         end
     end
 })
@@ -664,7 +708,7 @@ Tab5:Button({
             humanoid.UseJumpPower = true
             humanoid.JumpPower = 50
         end
-        print("ðŸ”„ Jump Power reset to 50")
+        print("🔄 Jump Power reset to 50")
     end
 })
 
@@ -688,15 +732,15 @@ Tab5:Button({
 
 Tab5:Toggle({
     Title = "Infinite Jump",
-    Desc = "activate to use infinite jump",
+    Desc = "Activate to use infinite jump",
     Type = "Checkbox",
     Default = false,
     Callback = function(state) 
         _G.InfiniteJump = state
         if state then
-            print("âœ… Infinite Jump Active")
+            print("✅ Infinite Jump Active")
         else
-            print("âŒ Infinite Jump Inactive")
+            print("❌ Infinite Jump Inactive")
         end
     end
 })
@@ -762,7 +806,6 @@ Tab6:Toggle({
             task.spawn(function()
                 while _G.AutoReconnect do
                     task.wait(2)
-
                     local reconnectUI = game:GetService("CoreGui"):FindFirstChild("RobloxPromptGui")
                     if reconnectUI then
                         local prompt = reconnectUI:FindFirstChild("promptOverlay")
@@ -837,7 +880,7 @@ Tab6:Toggle({
             Logo.Visible = true
             Title.Visible = true
             DiscordLink.Visible = true
-            print("Layar hitam DI AKTIFKAN")
+            print("Layar hitam DIAKTIFKAN")
         else
             BlackFrame.BackgroundTransparency = 1
             Logo.Visible = false
@@ -850,7 +893,7 @@ Tab6:Toggle({
 
 local Section = Tab6:Section({ 
     Title = "Config",
-	Icon = "folder-open"
+    Icon = "folder-open"
 })
 
 local ConfigFolder = "AzarineHub/Configs"
@@ -860,24 +903,25 @@ if not isfolder(ConfigFolder) then makefolder(ConfigFolder) end
 local ConfigName = "default.json"
 
 local function GetConfig()
+    local humanoid = getHumanoid()
     return {
-        WalkSpeed = Humanoid.WalkSpeed,
+        WalkSpeed = humanoid and humanoid.WalkSpeed or 16,
         JumpPower = _G.CustomJumpPower or 50,
         InfiniteJump = _G.InfiniteJump or false,
         AutoSell = _G.AutoSell or false,
-        InstantCatch = _G.InstantCatch or false,
+        AutoFishing = _G.AutoFishing or false,
         AntiAFK = _G.AntiAFK or false,
         AutoReconnect = _G.AutoReconnect or false,
     }
 end
 
 local function ApplyConfig(data)
-    if data.WalkSpeed then 
-        Humanoid.WalkSpeed = data.WalkSpeed 
+    local humanoid = getHumanoid()
+    if data.WalkSpeed and humanoid then 
+        humanoid.WalkSpeed = data.WalkSpeed 
     end
     if data.JumpPower then
         _G.CustomJumpPower = data.JumpPower
-        local humanoid = Player.Character and Player.Character:FindFirstChildOfClass("Humanoid")
         if humanoid then
             humanoid.UseJumpPower = true
             humanoid.JumpPower = data.JumpPower
@@ -889,8 +933,8 @@ local function ApplyConfig(data)
     if data.AutoSell ~= nil then
         _G.AutoSell = data.AutoSell
     end
-    if data.InstantCatch ~= nil then
-        _G.InstantCatch = data.InstantCatch
+    if data.AutoFishing ~= nil then
+        _G.AutoFishing = data.AutoFishing
     end
     if data.AntiAFK ~= nil then
         _G.AntiAFK = data.AntiAFK
@@ -905,7 +949,7 @@ Tab6:Button({
     Desc = "Save all settings",
     Callback = function()
         local data = GetConfig()
-        writefile(ConfigFolder.."/"..ConfigName, game:GetService("HttpService"):JSONEncode(data))
+        writefile(ConfigFolder .. "/" .. ConfigName, game:GetService("HttpService"):JSONEncode(data))
         print("✅ Config saved!")
     end
 })
@@ -914,8 +958,8 @@ Tab6:Button({
     Title = "Load Config",
     Desc = "Use saved config",
     Callback = function()
-        if isfile(ConfigFolder.."/"..ConfigName) then
-            local data = readfile(ConfigFolder.."/"..ConfigName)
+        if isfile(ConfigFolder .. "/" .. ConfigName) then
+            local data = readfile(ConfigFolder .. "/" .. ConfigName)
             local decoded = game:GetService("HttpService"):JSONDecode(data)
             ApplyConfig(decoded)
             print("✅ Config applied!")
@@ -929,8 +973,8 @@ Tab6:Button({
     Title = "Delete Config",
     Desc = "Delete saved config",
     Callback = function()
-        if isfile(ConfigFolder.."/"..ConfigName) then
-            delfile(ConfigFolder.."/"..ConfigName)
+        if isfile(ConfigFolder .. "/" .. ConfigName) then
+            delfile(ConfigFolder .. "/" .. ConfigName)
             print("🗑 Config deleted!")
         else
             warn("⚠️ No config to delete.")
