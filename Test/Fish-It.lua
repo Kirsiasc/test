@@ -125,12 +125,7 @@ _G.AutoFishing = false
 _G.Delay = 0
 _G.MaxSpeed = true
 
-local Tab3 = Window:Tab({
-    Title = "Fishing",
-    Icon = "fish",
-})
-
-Tab3:Toggle({
+Tab2:Toggle({
     Title = "Auto Instant Fishing",
     Desc = "Automic Instant Fishing",
     Icon = false,
@@ -142,7 +137,7 @@ Tab3:Toggle({
     end
 })
 
-local Input = Tab3:Input({
+local Input = Tab2:Input({
     Title = "Blast Delay",
     Desc = "Enter delay in seconds",
     Value = "",
