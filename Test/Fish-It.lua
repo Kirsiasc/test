@@ -12,7 +12,7 @@ end
 local Window = WindUI:CreateWindow({
     Title = "AzarineHub",
     Icon = "rbxassetid://125586515064911",
-    Author = "Fish It | V1.0.3",
+    Author = "Fish It | V1.0.4",
     Folder = "AzarineHub",
     Size = default,
     LiveSearchDropdown = true,
@@ -61,7 +61,7 @@ Tab1:Button({
 
 Tab1:Paragraph({
     Title = "Version",
-    Desc = "V1.0.1",
+    Desc = "V1.0.4",
 })
 
 Tab1:Paragraph({
@@ -117,49 +117,79 @@ spawn(function()
     end
 end)
 
-Tab2:Toggle({
-    Title = "Auto Fishing",
-    Desc = "Automatic Perfect Fishing",
+local RepStorage = game:GetService("ReplicatedStorage")
+local net = RepStorage.Packages._Index["sleitnick_net@0.2.0"].net
+local player = game.Players.LocalPlayer
+
+_G.AutoFishing = false
+_G.Delay = 0
+_G.MaxSpeed = true
+
+local Tab3 = Window:Tab({
+    Title = "Fishing",
+    Icon = "fish",
+})
+
+Tab3:Toggle({
+    Title = "Auto Instant Fishing",
+    Desc = "Automic Instant Fishing",
+    Icon = false,
+    Type = false,
     Default = false,
-    Callback = function(value) 
+    Callback = function(value)
         _G.AutoFishing = value
-        WindUI:Notify({
-            Title = "Notification",
-            Content = "Started AutoFish Thread",
-            Icon = "fish",
-            Duration = 3,
-        })
+        print("Auto Fishing: " .. tostring(value))
     end
 })
 
-local RepStorage = game:GetService("ReplicatedStorage")
+local Input = Tab3:Input({
+    Title = "Blast Delay",
+    Desc = "Enter delay in seconds",
+    Value = "",
+    InputIcon = false,
+    Type = "Input",
+    Placeholder = "Enter delay...",
+    Callback = function(input)
+        local newDelay = tonumber(input)
+        if newDelay and newDelay >= 0 then
+            _G.Delay = newDelay
+            print("Delay diubah menjadi: " .. _G.Delay .. " detik")
+            _G.MaxSpeed = (newDelay == 0)
+        else
+            print("Input invalid, gunakan angka >= 0")
+        end
+    end
+})
+
+local function InstantFish()
+    local char = player.Character or player.CharacterAdded:Wait()
+    if char:FindFirstChild("!!!FISHING_VIEW_MODEL!!!") then
+        net["RE/EquipToolFromHotbar"]:FireServer(1)
+    end
+    net["RF/ChargeFishingRod"]:InvokeServer(2)
+    net["RF/RequestFishingMinigameStarted"]:InvokeServer(1, 1)
+    net["RE/FishingCompleted"]:FireServer()
+end
 
 spawn(function()
-    while wait() do
-        if _G.AutoFishing then
-            pcall(function()
-                local char = Player.Character or Player.CharacterAdded:Wait()
-                if char:FindFirstChild("!!!FISHING_VIEW_MODEL!!!") then
-                    RepStorage.Packages._Index["sleitnick_net@0.2.0"].net["RE/EquipToolFromHotbar"]:FireServer(1)
-                end                    
-                local cosmeticFolder = workspace:FindFirstChild("CosmeticFolder")
-                if cosmeticFolder and not cosmeticFolder:FindFirstChild(tostring(Player.UserId)) then
-                    RepStorage.Packages._Index["sleitnick_net@0.2.0"].net["RF/ChargeFishingRod"]:InvokeServer(2)
-                    wait(0.5)
-                    RepStorage.Packages._Index["sleitnick_net@0.2.0"].net["RF/RequestFishingMinigameStarted"]:InvokeServer(1, 1)
-                end
-            end)
+    while task.wait() do
+        if _G.AutoFishing and _G.MaxSpeed then
+            while _G.AutoFishing do
+                InstantFish()
+                task.wait(0)
+            end
+        elseif _G.AutoFishing then
+            InstantFish()
+            if _G.Delay > 0 then
+                wait(_G.Delay)
+            end
         end
     end
 end)
 
-spawn(function()
-    while wait() do
-        if _G.AutoFishing then
-            pcall(function()
-                RepStorage.Packages._Index["sleitnick_net@0.2.0"].net["RE/FishingCompleted"]:FireServer()
-            end)
-        end
+player.CharacterAdded:Connect(function(char)
+    if _G.AutoFishing then
+        InstantFish()
     end
 end)
 
